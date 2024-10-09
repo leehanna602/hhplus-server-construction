@@ -14,10 +14,10 @@ sequenceDiagram
         QueueSystem-->>User: 대기 상태 응답
     end
 
-    note over User: 2.1 예약 가능 날짜 조회
+    note over User: 2.1. 예약 가능 날짜 조회
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Reservation: 예약 가능 날짜 조회
@@ -25,8 +25,8 @@ sequenceDiagram
 
     note over User: 2.2. 예약 가능 좌석 조회
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Reservation: 요청 날짜의 예약 가능 좌석 조회
@@ -34,8 +34,8 @@ sequenceDiagram
 
     note over User: 3. 좌석 예약 요청
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Reservation: 좌석 예약 요청
@@ -48,8 +48,8 @@ sequenceDiagram
 
     note over User: 4.1. 잔액 충전 요청
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Payment: 잔액 충전 요청
@@ -63,8 +63,8 @@ sequenceDiagram
 
     note over User: 4.2. 잔액 조회
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Payment: 잔액 조회
@@ -72,8 +72,8 @@ sequenceDiagram
 
     note over User: 5. 결제 요청
     User->>QueueSystem: 대기열 토큰 검증 요청
-    opt 대기열 검증 실패
-        QueueSystem-->>User: 토큰 유효 확인
+    break 대기열 검증 실패
+        QueueSystem-->>User: 토큰 검증 실패
     end
     
     User->>Payment: 결제 요청
