@@ -5,12 +5,12 @@ sequenceDiagram
     participant QueueSystem
     participant Reservation
     participant Payment
-    note over User: 1. 토큰 생성 요청
-    User->>QueueSystem: 1. 대기열 토큰 생성 요청
-    QueueSystem-->>User: 대기열 토큰 발급
-    
-    loop 대기 상태 확인
-        User->>QueueSystem: 대기 상태 확인 (폴링)
+    note over User: 1. 토큰 생성/조회 요청
+    User->>QueueSystem: 대기 상태 확인 (폴링)
+    alt 대기열 토큰 존재
+        QueueSystem-->>User: 대기 상태 응답
+    else 대기열 토큰 없음
+        QueueSystem-->>QueueSystem: 토큰 생성
         QueueSystem-->>User: 대기 상태 응답
     end
 
@@ -19,7 +19,6 @@ sequenceDiagram
     break 대기열 검증 실패
         QueueSystem-->>User: 토큰 검증 실패
     end
-    
     User->>Reservation: 예약 가능 날짜 조회
     Reservation-->>User: 예약 가능 날짜 목록 반환
 
@@ -28,7 +27,6 @@ sequenceDiagram
     break 대기열 검증 실패
         QueueSystem-->>User: 토큰 검증 실패
     end
-    
     User->>Reservation: 요청 날짜의 예약 가능 좌석 조회
     Reservation-->>User: 예약 가능 좌석 목록 반환
 
@@ -47,11 +45,6 @@ sequenceDiagram
     end
 
     note over User: 4.1. 잔액 충전 요청
-    User->>QueueSystem: 대기열 토큰 검증 요청
-    break 대기열 검증 실패
-        QueueSystem-->>User: 토큰 검증 실패
-    end
-    
     User->>Payment: 잔액 충전 요청
     Payment-->>Payment: 충전 가능한 금액인지 확인
     alt 충전 불가능한 금액
@@ -62,11 +55,6 @@ sequenceDiagram
     end
 
     note over User: 4.2. 잔액 조회
-    User->>QueueSystem: 대기열 토큰 검증 요청
-    break 대기열 검증 실패
-        QueueSystem-->>User: 토큰 검증 실패
-    end
-    
     User->>Payment: 잔액 조회
     Payment-->>User: 잔액 정보 반환
 
