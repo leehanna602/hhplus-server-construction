@@ -40,7 +40,12 @@
 - 결제가 완료되면 해당 좌석의 소유권을 유저에게 배정하고 대기열 토큰을 만료시킵니다.
 
 ## ✅ Milestone
-<img src="./Milestone.png" width="500px" title="Github_Logo"/>
+<img src="./Milestone.png" width="500px" title="Milestone"/>
 
 ## ✅ Sequence Diagram
 - [SequenceDiagram.md](SequenceDiagram.md)
+
+## ✅ ERD
+* [ERD.md](ERD.md)
+
+
