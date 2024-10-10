@@ -43,6 +43,7 @@ erDiagram
         bigint user_id FK
         bigint seat_id FK
         timestamp reservation_dt
+        timestamp reservation_expire_dt
         varchar reservation_status
     }
     
