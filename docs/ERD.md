@@ -3,23 +3,28 @@
 erDiagram
     user {
         bigint user_id PK
-        bigint point
+        varchar user_name
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     waiting_queue {
         bigint queue_id PK
-        bigint user_id FK
-        varchar token 
+        varchar token
         varchar progress
-        bigint waiting_num
-        timestamp token_create_dt
-        timestamp token_expired_dt
-        timestamp token_update_dt
+        timestamp expired_at
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     concert {
         bigint concert_id PK
         varchar concert_name
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     concert_schedule {
@@ -27,6 +32,9 @@ erDiagram
         bigint concert_id FK
         timestamp concert_dt
         integer total_seat
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     concert_seat {
@@ -36,6 +44,9 @@ erDiagram
         integer seat_num
         integer price
         varchar seat_status
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     reservation {
@@ -45,30 +56,47 @@ erDiagram
         timestamp reservation_dt
         timestamp reservation_expire_dt
         varchar reservation_status
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
-    
+
     payment {
         bigint payment_id PK
         bigint user_id FK
         bigint reservation_id FK
         bigint amount
-        varchar status
+        varchar pament_status
         timestamp payment_dt
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    point {
+        bigint point_id PK
+        bitint user_id FK
+        int point
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     point_history {
         bigint point_history_id PK
-        bigint user_id FK
+        bigint point_id FK
         bigint amount
         varchar type
-        timestamp created_dt
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
-    user ||--o{ waiting_queue : has
-    user ||--o{ point_history : has
-    user ||--o{ reservation : makes
-    concert ||--o{ concert_schedule : has
-    concert_schedule ||--o{ concert_seat : has
+    user ||--o{ point : has
+    point ||--o{ point_history : has
     concert_seat ||--o{ reservation : involved_in
+    concert ||--o{ concert_schedule : has
+    user ||--o{ reservation : makes
+    concert_schedule ||--o{ concert_seat : has
     reservation ||--o| payment : has
 ```
