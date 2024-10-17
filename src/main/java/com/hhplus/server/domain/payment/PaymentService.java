@@ -8,4 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+
+    private final PaymentReader paymentReader;
+    private final PaymentWriter paymentWriter;
+
+
 }

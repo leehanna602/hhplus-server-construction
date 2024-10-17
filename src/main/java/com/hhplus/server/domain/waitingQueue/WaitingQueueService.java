@@ -50,4 +50,14 @@ public class WaitingQueueService {
         Optional<WaitingQueue> waitingQueue = waitingQueueReader.findByTokenAndProgress(token, ProgressStatus.ACTIVE);
         return waitingQueue.isPresent();
     }
+
+    public void expiredToken(String token) {
+        Optional<WaitingQueue> findWaitingQueue = waitingQueueReader.findByToken(token);
+        if (findWaitingQueue.isPresent()) {
+            WaitingQueue waitingQueue = findWaitingQueue.get();
+            waitingQueue.expireToken();
+            waitingQueueWriter.save(waitingQueue);
+        }
+    }
+
 }

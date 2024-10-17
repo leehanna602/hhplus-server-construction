@@ -42,4 +42,8 @@ public class ConcertSeat extends BaseEntity {
         this.seatStatus = SeatStatus.TEMPORARY_RESERVED;
     }
 
+    public void reservationCompleted() {
+        this.seatStatus = SeatStatus.RESERVED;
+    }
+
 }

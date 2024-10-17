@@ -62,4 +62,11 @@ public class ConcertService {
         return concertSeat;
     }
 
+    @Transactional
+    public ConcertSeat completeStatus(ConcertSeat concertSeat) {
+        concertSeat.reservationCompleted();
+        concertSeat = concertWriter.save(concertSeat);
+        return concertSeat;
+    }
+
 }

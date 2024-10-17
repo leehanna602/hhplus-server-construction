@@ -54,4 +54,9 @@ public class Reservation extends BaseEntity {
         this.reservationStatus = ReservationStatus.EXPIRED;
     }
 
+    public void validate() {
+        if (reservationExpireDt.isBefore(LocalDateTime.now()) || reservationStatus == ReservationStatus.EXPIRED) {
+            throw new RuntimeException("예약 가능한 시간이 만료된 예약 ID 입니다.");
+        }
+    }
 }

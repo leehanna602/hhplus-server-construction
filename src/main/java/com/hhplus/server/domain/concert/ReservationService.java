@@ -29,4 +29,17 @@ public class ReservationService {
         return reservationInfo;
     }
 
+    @Transactional(readOnly = true)
+    public Reservation validateReservationId(Long reservationId) {
+        Reservation reservation = reservationReader.findByReservationId(reservationId);
+        reservation.validate();
+        return reservation;
+    }
+
+    @Transactional
+    public Reservation completeStatus(Reservation reservation) {
+        reservation.reservationCompleted();
+        return reservation;
+    }
+
 }
