@@ -23,10 +23,19 @@ public class PointHistory extends BaseEntity {
     private Point point;
 
     @Column(name = "amount")
-    private Long amount;
+    private int amount;
+
+    @Column(name = "point_after_transaction")
+    private int pointAfterTransaction;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private TransactionType type;
 
+    public PointHistory(Point point, int amount, TransactionType type) {
+        this.point = point;
+        this.amount = amount;
+        this.pointAfterTransaction = point.getPoint();
+        this.type = type;
+    }
 }

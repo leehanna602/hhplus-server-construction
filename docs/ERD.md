@@ -85,7 +85,8 @@ erDiagram
     point_history {
         bigint point_history_id PK
         bigint point_id FK
-        bigint amount
+        int amount
+        int point_after_transaction
         varchar type
         varchar status
         timestamp created_at
