@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,5 +37,10 @@ public class ConcertReaderImpl implements ConcertReader {
     @Override
     public List<ConcertSeat> getConcertSeatsBySeatStatus(ConcertSchedule concertSchedule, SeatStatus seatStatus) {
         return concertSeatJpaRepository.findByConcertScheduleAndSeatStatus(concertSchedule, seatStatus);
+    }
+
+    @Override
+    public Optional<ConcertSeat> findConcertSeatForReservationWithLock(Long concertId, Long scheduleId, Long seatId) {
+        return concertSeatJpaRepository.findConcertSeatForReservationWithLock(concertId, scheduleId, seatId);
     }
 }

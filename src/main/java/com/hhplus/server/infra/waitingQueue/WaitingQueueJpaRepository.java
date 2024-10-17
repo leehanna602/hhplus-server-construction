@@ -1,5 +1,6 @@
 package com.hhplus.server.infra.waitingQueue;
 
+import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,5 @@ public interface WaitingQueueJpaRepository extends JpaRepository<WaitingQueue, L
     @Query("SELECT COUNT(*) FROM WaitingQueue WHERE progress = 'WAITING' AND queueId <= :queueId")
     Long getWaitingNum(Long queueId);
 
+    Optional<WaitingQueue> findByTokenAndProgress(String token, ProgressStatus progressStatus);
 }

@@ -38,4 +38,20 @@ public class Reservation extends BaseEntity {
     @Column(name = "reservation_status")
     private ReservationStatus reservationStatus;
 
+    public Reservation(User user, ConcertSeat concertSeat) {
+        this.user = user;
+        this.seat = concertSeat;
+        this.reservationDt = LocalDateTime.now();
+        this.reservationExpireDt = LocalDateTime.now().plusMinutes(5);
+        this.reservationStatus = ReservationStatus.TEMPORARY;
+    }
+
+    public void reservationCompleted() {
+        this.reservationStatus = ReservationStatus.COMPLETED;
+    }
+
+    public void reservationExpired() {
+        this.reservationStatus = ReservationStatus.EXPIRED;
+    }
+
 }

@@ -1,7 +1,7 @@
 ## 😺 콘서트 예약 서비스 ERD
 ```mermaid
 erDiagram
-    user {
+    users {
         bigint user_id PK
         varchar user_name
         varchar status
@@ -92,11 +92,11 @@ erDiagram
         timestamp updated_at
     }
 
-    user ||--o{ point : has
+    users ||--o{ point : has
     point ||--o{ point_history : has
     concert_seat ||--o{ reservation : involved_in
     concert ||--o{ concert_schedule : has
-    user ||--o{ reservation : makes
+    users ||--o{ reservation : makes
     concert_schedule ||--o{ concert_seat : has
     reservation ||--o| payment : has
 ```

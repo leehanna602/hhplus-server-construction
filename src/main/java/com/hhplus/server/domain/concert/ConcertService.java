@@ -52,4 +52,14 @@ public class ConcertService {
                 concertSeatsList.size(), concertSeatsList);
     }
 
+    @Transactional
+    public ConcertSeat findConcertSeatForReservation(Long concertId, Long scheduleId, Long seatId) {
+        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithLock(concertId, scheduleId, seatId)
+                .orElseThrow(() -> new RuntimeException("존재하는 좌석이 없습니다."));
+
+        concertSeat.temporaryReserved();
+        concertSeat = concertWriter.save(concertSeat);
+        return concertSeat;
+    }
+
 }

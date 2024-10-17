@@ -1,6 +1,7 @@
 package com.hhplus.server.domain.waitingQueue;
 
 import com.hhplus.server.domain.waitingQueue.dto.WaitingQueueInfo;
+import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,4 +45,9 @@ public class WaitingQueueService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public boolean validateActiveToken(String token) {
+        Optional<WaitingQueue> waitingQueue = waitingQueueReader.findByTokenAndProgress(token, ProgressStatus.ACTIVE);
+        return waitingQueue.isPresent();
+    }
 }

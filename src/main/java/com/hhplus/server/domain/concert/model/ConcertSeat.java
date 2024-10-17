@@ -35,4 +35,11 @@ public class ConcertSeat extends BaseEntity {
     @Column(name = "seat_status")
     private SeatStatus seatStatus;
 
+    public void temporaryReserved() {
+        if (this.seatStatus != SeatStatus.AVAILABLE) {
+            throw new IllegalStateException("좌석 예약이 불가능합니다.");
+        }
+        this.seatStatus = SeatStatus.TEMPORARY_RESERVED;
+    }
+
 }
