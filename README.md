@@ -44,3 +44,7 @@
 
 ### **`Architecture`**
 * Clean Architecture + Layered Architecture
+
+## ✅ API Swagger
+* http://localhost:8080/swagger-ui/index.html
+<img src="/docs/swagger.png" width="500px" title="swagger"/>
