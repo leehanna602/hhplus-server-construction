@@ -5,6 +5,7 @@ import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ public class WaitingQueueService {
     private final WaitingQueueReader waitingQueueReader;
     private final WaitingQueueWriter waitingQueueWriter;
 
+    @Transactional
     public WaitingQueueInfo getWaitingQueueInfo(String token) {
         WaitingQueue waitingQueue;
         Optional<WaitingQueue> existWaitingQueue = waitingQueueReader.findByToken(token);
