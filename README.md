@@ -22,6 +22,13 @@
 - API 명세 및 Mock API 작성
 - 자료들을 리드미에 작성 후 PR링크 제출 ( 패키지 구조, 기술스택 등 )
 
+### **`STEP 07`**
+- API Swagger 기능 구현 및 캡쳐본 첨부 ( Readme )
+- 주요 비즈니스 로직 개발 및 단위 테스트 작성
+
+### **`STEP 08`**
+- 비즈니스 Usecase 개발 및 통합 테스트 작성
+
 ## ✅ 설계
 ### **`Milestone`**
 * [Milestone.md](docs/Milestone.md)
@@ -37,3 +44,7 @@
 
 ### **`Architecture`**
 * Clean Architecture + Layered Architecture
+
+## ✅ API Swagger
+* http://localhost:8080/swagger-ui/index.html
+<img src="/docs/swagger.png" width="500px" title="swagger"/>
