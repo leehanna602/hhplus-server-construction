@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -17,6 +18,8 @@ public class WaitingQueueService {
 
     private final WaitingQueueReader waitingQueueReader;
     private final WaitingQueueWriter waitingQueueWriter;
+
+    private static final int activeProgressUserNumber = 50;
 
     @Transactional
     public WaitingQueueInfo getWaitingQueueInfo(String token) {
@@ -51,6 +54,31 @@ public class WaitingQueueService {
         return waitingQueue.isPresent();
     }
 
+    @Transactional
+    public void tokenProgressWaitingToActive() {
+        List<WaitingQueue> waitingList = waitingQueueReader.findByProgressOrderByQueueIdAsc(ProgressStatus.WAITING);
+        List<WaitingQueue> activeList = waitingQueueReader.findByProgressOrderByQueueIdAsc(ProgressStatus.ACTIVE);
+
+        int addActiveNumber = activeProgressUserNumber - activeList.size();
+        if (!waitingList.isEmpty() && addActiveNumber > 0) {
+            for (int waitingIdx = 0; waitingIdx < addActiveNumber; waitingIdx++) {
+                WaitingQueue waitingQueue = waitingList.get(waitingIdx);
+                waitingQueue.waitingToActiveToken();
+                waitingQueueWriter.save(waitingQueue);
+            }
+        }
+    }
+
+    @Transactional
+    public void expiredToken() {
+        List<WaitingQueue> toExpiredList = waitingQueueReader.findWaitingQueueToExpired();
+        for (WaitingQueue waitingQueue : toExpiredList) {
+            waitingQueue.expireToken();
+            waitingQueueWriter.save(waitingQueue);
+        }
+    }
+
+    @Transactional
     public void expiredToken(String token) {
         Optional<WaitingQueue> findWaitingQueue = waitingQueueReader.findByToken(token);
         if (findWaitingQueue.isPresent()) {

@@ -46,4 +46,8 @@ public class ConcertSeat extends BaseEntity {
         this.seatStatus = SeatStatus.RESERVED;
     }
 
+    public void concertSeatToAvailable() {
+        this.seatStatus = SeatStatus.AVAILABLE;
+    }
+
 }

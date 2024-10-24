@@ -6,6 +6,7 @@ import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,6 +28,16 @@ public class WaitingQueueReaderImpl implements WaitingQueueReader {
     @Override
     public Optional<WaitingQueue> findByTokenAndProgress(String token, ProgressStatus progressStatus) {
         return waitingQueueJpaRepository.findByTokenAndProgress(token, progressStatus);
+    }
+
+    @Override
+    public List<WaitingQueue> findByProgressOrderByQueueIdAsc(ProgressStatus progressStatus) {
+        return waitingQueueJpaRepository.findByProgressOrderByQueueIdAsc(progressStatus);
+    }
+
+    @Override
+    public List<WaitingQueue> findWaitingQueueToExpired() {
+        return waitingQueueJpaRepository.findToExpiredToken();
     }
 
 }

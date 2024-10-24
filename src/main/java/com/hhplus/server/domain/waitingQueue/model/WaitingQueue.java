@@ -43,6 +43,10 @@ public class WaitingQueue extends BaseEntity {
         }
     }
 
+    public void waitingToActiveToken() {
+        this.progress = ProgressStatus.ACTIVE;
+    }
+
     public void expireToken() {
         this.progress = ProgressStatus.EXPIRED;
     }

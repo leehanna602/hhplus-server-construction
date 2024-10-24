@@ -69,4 +69,10 @@ public class ConcertService {
         return concertSeat;
     }
 
+    @Transactional
+    public void concertSeatToExpired(ConcertSeat concertSeat) {
+        concertSeat.concertSeatToAvailable();
+        concertWriter.save(concertSeat);
+    }
+
 }
