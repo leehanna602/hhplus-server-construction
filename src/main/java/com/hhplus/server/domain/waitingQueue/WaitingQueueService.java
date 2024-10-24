@@ -63,8 +63,7 @@ public class WaitingQueueService {
 
         int addActiveNumber = activeProgressUserNumber - activeList.size();
         if (!waitingList.isEmpty() && addActiveNumber > 0) {
-            for (int waitingIdx = 0; waitingIdx < addActiveNumber; waitingIdx++) {
-                WaitingQueue waitingQueue = waitingList.get(waitingIdx);
+            for (WaitingQueue waitingQueue : waitingList) {
                 waitingQueue.waitingToActiveToken();
                 waitingQueueWriter.save(waitingQueue);
             }
