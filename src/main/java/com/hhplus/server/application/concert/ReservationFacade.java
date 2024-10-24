@@ -1,5 +1,7 @@
 package com.hhplus.server.application.concert;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
 import com.hhplus.server.domain.concert.ConcertService;
 import com.hhplus.server.domain.concert.ReservationService;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
@@ -25,7 +27,7 @@ public class ReservationFacade {
         // 토큰 상태 검증
         boolean validateActiveToken = waitingQueueService.validateActiveToken(reservationReq.token());
         if (!validateActiveToken) {
-            throw new RuntimeException("Invalid active token");
+            throw new CommonException(WaitingQueueErrorCode.INVALID_TOKEN);
         }
 
         User user = userService.getUser(reservationReq.userId());

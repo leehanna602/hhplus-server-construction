@@ -1,5 +1,7 @@
 package com.hhplus.server.domain.waitingQueue;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
 import com.hhplus.server.domain.waitingQueue.dto.WaitingQueueInfo;
 import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
@@ -32,7 +34,7 @@ public class WaitingQueueService {
             waitingQueue.validateToken();
         } else {
             if (token != null) {
-                throw new RuntimeException("존재하지 않은 토큰입니다.");
+                throw new CommonException(WaitingQueueErrorCode.INVALID_TOKEN);
             }
             // token 생성
             waitingQueue = waitingQueueWriter.save(new WaitingQueue());

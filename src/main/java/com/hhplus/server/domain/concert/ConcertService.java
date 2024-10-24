@@ -1,5 +1,7 @@
 package com.hhplus.server.domain.concert;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ConcertScheduleInfo;
 import com.hhplus.server.domain.concert.dto.ConcertSeatInfo;
 import com.hhplus.server.domain.concert.model.Concert;
@@ -55,7 +57,7 @@ public class ConcertService {
     @Transactional
     public ConcertSeat findConcertSeatForReservation(Long concertId, Long scheduleId, Long seatId) {
         ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithLock(concertId, scheduleId, seatId)
-                .orElseThrow(() -> new RuntimeException("존재하는 좌석이 없습니다."));
+                .orElseThrow(() -> new CommonException(ConcertErrorCode.INVALID_SEAT));
 
         concertSeat.temporaryReserved();
         concertSeat = concertWriter.save(concertSeat);
