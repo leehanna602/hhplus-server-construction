@@ -1,5 +1,8 @@
 package com.hhplus.server.domain.payment.model;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.CommonErrorCode;
+import com.hhplus.server.domain.common.exception.PaymentErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import com.hhplus.server.domain.user.model.User;
 import jakarta.persistence.*;
@@ -31,16 +34,16 @@ public class Point extends BaseEntity {
         switch (type) {
             case CHARGE:
                 if (currentAmount + amount > maxPoint) {
-                    throw new IllegalArgumentException("충전 가능한 총액을 초과하였습니다.");
+                    throw new CommonException(PaymentErrorCode.EXCEEDED_CHARGE_AMOUNT);
                 }
                 break;
             case USE:
                 if (currentAmount < amount) {
-                    throw new IllegalArgumentException("사용 가능한 포인트가 부족합니다.");
+                    throw new CommonException(PaymentErrorCode.INSUFFICIENT_POINT);
                 }
                 break;
             default:
-                throw new IllegalArgumentException("유효하지 않은 타입입니다.");
+                throw new CommonException(CommonErrorCode.INVALID_INPUT_VALUE);
         }
     }
 

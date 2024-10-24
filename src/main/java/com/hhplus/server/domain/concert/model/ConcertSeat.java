@@ -1,5 +1,7 @@
 package com.hhplus.server.domain.concert.model;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.ConcertErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,13 +39,17 @@ public class ConcertSeat extends BaseEntity {
 
     public void temporaryReserved() {
         if (this.seatStatus != SeatStatus.AVAILABLE) {
-            throw new IllegalStateException("좌석 예약이 불가능합니다.");
+            throw new CommonException(ConcertErrorCode.UNAVAILABLE_SEAT);
         }
         this.seatStatus = SeatStatus.TEMPORARY_RESERVED;
     }
 
     public void reservationCompleted() {
         this.seatStatus = SeatStatus.RESERVED;
+    }
+
+    public void concertSeatToAvailable() {
+        this.seatStatus = SeatStatus.AVAILABLE;
     }
 
 }

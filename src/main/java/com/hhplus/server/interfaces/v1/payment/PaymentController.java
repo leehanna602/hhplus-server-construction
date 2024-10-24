@@ -6,10 +6,7 @@ import com.hhplus.server.interfaces.v1.payment.req.PaymentReq;
 import com.hhplus.server.interfaces.v1.payment.res.PaymentRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +17,7 @@ public class PaymentController {
 
     /* 결제 */
     @PostMapping("")
-    public ResponseEntity<PaymentRes> payment(@RequestBody PaymentReq paymentReq) {
+    public ResponseEntity<PaymentRes> payment(@RequestHeader("token") String token, @RequestBody PaymentReq paymentReq) {
         PaymentInfo paymentInfo = paymentFacade.concertPayment(paymentReq.userId(), paymentReq.token(), paymentReq.reservationId());
         return ResponseEntity.ok(new PaymentRes(paymentInfo.userId(), paymentInfo.status()));
     }
