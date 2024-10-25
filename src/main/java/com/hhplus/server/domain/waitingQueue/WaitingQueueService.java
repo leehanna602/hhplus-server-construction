@@ -89,4 +89,8 @@ public class WaitingQueueService {
         }
     }
 
+    public WaitingQueue save(WaitingQueue waitingQueue) {
+        return waitingQueueWriter.save(waitingQueue);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Table(name = "waiting_queue")
 @Getter
 @AllArgsConstructor
+@Builder
 public class WaitingQueue extends BaseEntity {
     @Id
     @Column(name = "queue_id")

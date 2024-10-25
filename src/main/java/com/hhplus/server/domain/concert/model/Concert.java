@@ -3,6 +3,7 @@ package com.hhplus.server.domain.concert.model;
 import com.hhplus.server.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Concert extends BaseEntity {
     @Id
     @Column(name = "concert_id")
