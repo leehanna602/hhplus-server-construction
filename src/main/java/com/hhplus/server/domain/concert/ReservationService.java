@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,19 @@ public class ReservationService {
     @Transactional
     public Reservation completeStatus(Reservation reservation) {
         reservation.reservationCompleted();
+        reservationWriter.save(reservation);
+        return reservation;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> getReservationsTemporaryToExpired() {
+        return reservationReader.findReservationsTemporaryToExpired();
+    }
+
+    @Transactional
+    public Reservation reservationToExpired(Reservation reservation) {
+        reservation.reservationExpired();
+        reservationWriter.save(reservation);
         return reservation;
     }
 

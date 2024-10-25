@@ -1,5 +1,7 @@
 package com.hhplus.server.application.payment;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.PaymentErrorCode;
 import com.hhplus.server.domain.payment.PointService;
 import com.hhplus.server.domain.payment.dto.UserPointInfo;
 import com.hhplus.server.domain.payment.model.Point;
@@ -17,7 +19,7 @@ public class PointFacade {
     public UserPointInfo getUserPointInfo(Long userId) {
         Point point = pointService.getUserPointInfo(userId);
         if (point == null) {
-            throw new RuntimeException("포인트가 존재하지 않습니다.");
+            throw new CommonException(PaymentErrorCode.INSUFFICIENT_POINT);
         }
         return new UserPointInfo(point.getUser().getUserId(), point.getPoint());
     }

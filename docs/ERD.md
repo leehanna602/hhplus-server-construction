@@ -65,7 +65,7 @@ erDiagram
         bigint payment_id PK
         bigint user_id FK
         bigint reservation_id FK
-        bigint amount
+        int amount
         varchar pament_status
         timestamp payment_dt
         varchar status

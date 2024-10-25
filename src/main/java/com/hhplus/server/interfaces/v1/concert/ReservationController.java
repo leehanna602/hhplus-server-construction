@@ -6,10 +6,7 @@ import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import com.hhplus.server.interfaces.v1.concert.res.ReservationRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +17,7 @@ public class ReservationController {
 
     /* 좌석 예약 요청 */
     @PostMapping("/seat")
-    public ResponseEntity<ReservationRes> reservation(@RequestBody ReservationReq reservationReq) {
+    public ResponseEntity<ReservationRes> reservation(@RequestHeader("token") String token, @RequestBody ReservationReq reservationReq) {
         ReservationInfo reservationInfo = reservationFacade.concertSeatReservation(reservationReq);
         ReservationRes reservationRes = new ReservationRes(reservationInfo.reservationId(), reservationInfo.seatId(),
                 reservationInfo.status(), reservationInfo.expiredDt().toString());

@@ -6,7 +6,6 @@ import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
-import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
 import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,16 +17,9 @@ public class ReservationFacade {
     private final UserService userService;
     private final ConcertService concertService;
     private final ReservationService reservationService;
-    private final WaitingQueueService waitingQueueService;
 
     @Transactional
     public ReservationInfo concertSeatReservation(ReservationReq reservationReq) {
-        // 토큰 상태 검증
-        boolean validateActiveToken = waitingQueueService.validateActiveToken(reservationReq.token());
-        if (!validateActiveToken) {
-            throw new RuntimeException("Invalid active token");
-        }
-
         User user = userService.getUser(reservationReq.userId());
 
         // 예약

@@ -1,5 +1,7 @@
 package com.hhplus.server.domain.concert.model;
 
+import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.common.exception.ConcertErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import com.hhplus.server.domain.user.model.User;
 import jakarta.persistence.*;
@@ -56,7 +58,7 @@ public class Reservation extends BaseEntity {
 
     public void validate() {
         if (reservationExpireDt.isBefore(LocalDateTime.now()) || reservationStatus == ReservationStatus.EXPIRED) {
-            throw new RuntimeException("예약 가능한 시간이 만료된 예약 ID 입니다.");
+            throw new CommonException(ConcertErrorCode.EXPIRED_RESERVATION);
         }
     }
 }
