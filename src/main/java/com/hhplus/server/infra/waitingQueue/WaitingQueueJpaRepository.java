@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,10 @@ public interface WaitingQueueJpaRepository extends JpaRepository<WaitingQueue, L
     Long getWaitingNum(Long queueId);
 
     Optional<WaitingQueue> findByTokenAndProgress(String token, ProgressStatus progressStatus);
+
+    List<WaitingQueue> findByProgressOrderByQueueIdAsc(ProgressStatus progressStatus);
+
+    @Query("SELECT wq FROM WaitingQueue wq WHERE wq.progress <> 'EXPIRED' AND current_timestamp > wq.expiredAt")
+    List<WaitingQueue> findToExpiredToken();
+
 }

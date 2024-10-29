@@ -73,6 +73,7 @@
 * Method: `POST`
 * URL: `/v1/reservations/seat`
 * Description: 콘서트 좌석 예약
+* Header: String token
 * Request
   ```json
   {
@@ -129,6 +130,7 @@
 * Method: `POST`
 * URL: `/v1/payment`
 * Description: 결제
+* Header: String token
 * Request
   ```json
   {

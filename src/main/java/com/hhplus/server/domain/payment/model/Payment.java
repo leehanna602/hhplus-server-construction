@@ -30,7 +30,7 @@ public class Payment extends BaseEntity {
     private Reservation reservation;
 
     @Column(name = "amount")
-    private Long amount;
+    private Integer amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pament_status")
@@ -38,5 +38,13 @@ public class Payment extends BaseEntity {
 
     @Column(name = "payment_dt")
     private LocalDateTime paymentDt;
+
+    public Payment(User user, Reservation reservation, Integer amount, PaymentStatus paymentStatus) {
+        this.user = user;
+        this.reservation = reservation;
+        this.amount = amount;
+        this.paymentStatus = paymentStatus;
+        this.paymentDt = LocalDateTime.now();
+    }
 
 }
