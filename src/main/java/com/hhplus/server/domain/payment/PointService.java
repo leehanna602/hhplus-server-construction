@@ -34,4 +34,8 @@ public class PointService {
         return point;
     }
 
+    public Point save(Point point) {
+        return pointWriter.save(point);
+    }
+
 }
