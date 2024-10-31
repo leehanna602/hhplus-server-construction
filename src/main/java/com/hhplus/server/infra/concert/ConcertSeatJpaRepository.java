@@ -16,7 +16,16 @@ import java.util.Optional;
 
 @Repository
 public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeat, Long> {
+
     List<ConcertSeat> findByConcertScheduleAndSeatStatus(ConcertSchedule concertSchedule, SeatStatus seatStatus);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("SELECT cs FROM ConcertSeat cs " +
+            "WHERE cs.concert.concertId = :concertId " +
+            "AND cs.concertSchedule.concertScheduleId = :scheduleId " +
+            "AND cs.seatId = :seatId")
+    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long concertId, Long scheduleId, Long seatId);
+
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints(@QueryHint(name = "javax.persistence.lock.timeout", value = "3000"))

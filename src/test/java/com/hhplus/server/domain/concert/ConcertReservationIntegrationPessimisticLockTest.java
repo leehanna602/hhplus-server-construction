@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-public class ConcertReservationIntegrationTest {
+public class ConcertReservationIntegrationPessimisticLockTest {
 
     @Autowired
     private ReservationFacade reservationFacade;
@@ -93,6 +93,7 @@ public class ConcertReservationIntegrationTest {
                 .seatNum(1)
                 .price(5000)
                 .seatStatus(SeatStatus.AVAILABLE)
+                .version(1L)
                 .build();
         concertWriter.save(concertSeat);
     }
@@ -119,7 +120,7 @@ public class ConcertReservationIntegrationTest {
                             concertSeat.getSeatId()
                     );
 
-                    reservationFacade.concertSeatReservation(request);
+                    reservationFacade.concertSeatReservationWithPessimisticLock(request);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     synchronized (exceptions) {

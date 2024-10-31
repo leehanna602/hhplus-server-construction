@@ -39,6 +39,9 @@ public class ConcertSeat extends BaseEntity {
     @Column(name = "seat_status")
     private SeatStatus seatStatus;
 
+    @Version
+    private Long version = 1L;
+
     public void temporaryReserved() {
         if (this.seatStatus != SeatStatus.AVAILABLE) {
             throw new CommonException(ConcertErrorCode.UNAVAILABLE_SEAT);
