@@ -14,8 +14,13 @@ public class PointWriterImpl implements PointWriter {
     private final PointHistoryJpaRepository pointHistoryJpaRepository;
 
     @Override
-    public Point findByUserPointWithLock(Long userId) {
-        return pointJpaRepository.findByUserPointWithLock(userId);
+    public Point findByUserPointWithOptimisticLock(Long userId) {
+        return pointJpaRepository.findByUserPointWithOptimisticLock(userId);
+    }
+
+    @Override
+    public Point findByUserPointWithPessimisticLock(Long userId) {
+        return pointJpaRepository.findByUserPointWithPessimisticLock(userId);
     }
 
     @Override

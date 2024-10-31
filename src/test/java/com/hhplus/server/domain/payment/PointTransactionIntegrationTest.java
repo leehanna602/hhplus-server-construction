@@ -12,12 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,9 +27,9 @@ public class PointTransactionIntegrationTest {
 
     private User testUser;
     private Point point;
-    private static final int THREAD_COUNT = 10;
-    private static final int CHARGE_AMOUNT = 1000;
-    private static final int USE_AMOUNT = 500;
+
+    private static final int USER_DEFAULT_AMOUNT = 100000;
+
     @Autowired
     private PointService pointService;
 
@@ -49,28 +45,37 @@ public class PointTransactionIntegrationTest {
         point = Point.builder()
                 .pointId(1L)
                 .user(testUser)
-                .point(0)
+                .point(USER_DEFAULT_AMOUNT)
+                .version(1L)
                 .build();
         point = pointService.save(point);
     }
 
     @Test
-    void 동시에_여러충전요청_포인트충전_정상() throws InterruptedException {
+    @DisplayName("동일한 사용자가 동시에 여러건의 포인트 충전 요청시 낙관적락 동시성 처리로 인해 대부분 실패")
+    void concurrentPointChargeWithOptimisticLockFailure() throws InterruptedException {
+        int THREAD_COUNT = 100;
+        int CHARGE_AMOUNT = 1000;
+
         // given
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
-        List<Future<UserPointInfo>> futures = new ArrayList<>();
 
         // when
         for (int i = 0; i < THREAD_COUNT; i++) {
-            Future<UserPointInfo> future = executorService.submit(() -> {
+            executorService.submit(() -> {
                 try {
-                    return pointFacade.chargePoint(testUser.getUserId(), CHARGE_AMOUNT, TransactionType.CHARGE);
+                    UserPointInfo userPointInfo = pointFacade.pointTransaction(testUser.getUserId(), CHARGE_AMOUNT, TransactionType.CHARGE);
+                    System.out.println(userPointInfo);
+                    successCount.incrementAndGet();
+                } catch (Exception e) {
+                    failCount.incrementAndGet();
                 } finally {
                     latch.countDown();
                 }
             });
-            futures.add(future);
         }
 
         latch.await();
@@ -78,11 +83,96 @@ public class PointTransactionIntegrationTest {
 
         // then
         // 마지막 포인트 조회
-        UserPointInfo finalPoint = pointFacade.chargePoint(testUser.getUserId(), 0, TransactionType.CHARGE);
+        UserPointInfo finalPoint = pointFacade.getUserPointInfo(testUser.getUserId());
 
-        // 예상 총 포인트 = 충전금액 * 스레드 수
-        int expectedTotalPoint = CHARGE_AMOUNT * THREAD_COUNT;
+        // 예상 총 포인트 = 유저 초기 포인트 + (성공한 개수 * 충전금액)
+        System.out.println("최종 유저 포인트: " + finalPoint);
+        int expectedTotalPoint = USER_DEFAULT_AMOUNT + (CHARGE_AMOUNT * successCount.get());
         assertThat(finalPoint.point()).isEqualTo(expectedTotalPoint);
+    }
+
+
+    @Test
+    @DisplayName("동일한 사용자가 동시에 100건의 포인트 사용 요청시 비관적락 동시성 처리로 모두 성공")
+    void concurrentPointUseWithPessimisticLockSuccess() throws InterruptedException {
+        long beforeTime = System.currentTimeMillis();
+
+        // given
+        int THREAD_COUNT = 100;
+        int USE_AMOUNT = 500;
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+
+        // when
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executorService.submit(() -> {
+                try {
+                    UserPointInfo userPointInfo = pointFacade.pointTransaction(testUser.getUserId(), USE_AMOUNT, TransactionType.USE);
+                    System.out.println(userPointInfo);
+                    return userPointInfo;
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        executorService.shutdown();
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        System.out.println("실행 시간(ms): " + diffTime + "ms");
+
+        // then
+        // 마지막 포인트 조회
+        UserPointInfo finalPoint = pointFacade.getUserPointInfo(testUser.getUserId());
+
+        // 예상 총 포인트 = 유저 초기 포인트 - (충전금액 * 스레드 수)
+        int expectedTotalPoint = USER_DEFAULT_AMOUNT - (USE_AMOUNT * THREAD_COUNT);
+        assertThat(finalPoint.point()).isEqualTo(expectedTotalPoint);
+        assertThat(finalPoint.point()).isEqualTo(50000);
+    }
+
+    /* 테스트용 : 비관적락과 비교하기 위한 테스트 */
+    @Test
+    @DisplayName("동일한 사용자가 동시에 100건의 포인트 사용 요청시 낙관적락 동시성 처리로 대부분 실패")
+    void concurrentPointUseWithOptimisticLockFailure() throws InterruptedException {
+        long beforeTime = System.currentTimeMillis();
+
+        // given
+        int THREAD_COUNT = 100;
+        int USE_AMOUNT = 500;
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+
+        // when
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executorService.submit(() -> {
+                try {
+                    UserPointInfo userPointInfo = pointFacade.pointTransaction(testUser.getUserId(), USE_AMOUNT, TransactionType.USE);
+                    System.out.println(userPointInfo);
+                    return userPointInfo;
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        executorService.shutdown();
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        System.out.println("실행 시간(ms): " + diffTime + "ms");
+
+        // then
+        // 마지막 포인트 조회
+        UserPointInfo finalPoint = pointFacade.getUserPointInfo(testUser.getUserId());
+
+        // 예상 총 포인트 = 유저 포인트 - (충전금액 * 스레드 수)
+        int expectedTotalPoint = USER_DEFAULT_AMOUNT - (USE_AMOUNT * THREAD_COUNT);
+        assertThat(finalPoint.point()).isGreaterThan(expectedTotalPoint);
+        assertThat(finalPoint.point()).isGreaterThan(50000);
     }
 
 

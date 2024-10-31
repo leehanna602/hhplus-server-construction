@@ -119,7 +119,7 @@ class ConcertServiceTest {
                 LocalDateTime.of(2024, 12, 10, 12, 0, 0), 50);
         ConcertSeat concertSeat1 = new ConcertSeat(142L, concert, concertSchedule1, 1, 15000, SeatStatus.AVAILABLE);
         when(concertWriter.save(any(ConcertSeat.class))).thenReturn(concertSeat1);
-        when(concertReader.findConcertSeatForReservationWithLock(concertId, scheduleId, concertSeat1.getSeatId())).thenReturn(Optional.of(concertSeat1));
+        when(concertReader.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, concertSeat1.getSeatId())).thenReturn(Optional.of(concertSeat1));
 
         // when
         ConcertSeat concertSeat = concertService.findConcertSeatForReservation(concertId, scheduleId, concertSeat1.getSeatId());
@@ -128,7 +128,7 @@ class ConcertServiceTest {
         assertNotNull(concertSeat);
         assertEquals(concertSeat1.getSeatId(), concertSeat.getSeatId());
         assertEquals(concertSeat.getSeatStatus(), SeatStatus.TEMPORARY_RESERVED);
-        verify(concertReader).findConcertSeatForReservationWithLock(concertId, scheduleId, concertSeat1.getSeatId());
+        verify(concertReader).findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, concertSeat1.getSeatId());
     }
 
     @Test
@@ -140,7 +140,7 @@ class ConcertServiceTest {
         ConcertSchedule concertSchedule1 = new ConcertSchedule(scheduleId, concert,
                 LocalDateTime.of(2024, 12, 10, 12, 0, 0), 50);
         ConcertSeat concertSeat1 = new ConcertSeat(142L, concert, concertSchedule1, 1, 15000, SeatStatus.AVAILABLE);
-        when(concertReader.findConcertSeatForReservationWithLock(concertId, scheduleId, concertSeat1.getSeatId())).thenReturn(Optional.of(concertSeat1));
+        when(concertReader.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, concertSeat1.getSeatId())).thenReturn(Optional.of(concertSeat1));
 
         // when & then
         assertThrows(RuntimeException.class, () -> concertService.findConcertSeatForReservation(concertId, scheduleId, concertSeat1.getSeatId()+1));
