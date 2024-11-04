@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,8 +24,11 @@ public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeat, Lon
     @Query("SELECT cs FROM ConcertSeat cs " +
             "WHERE cs.concert.concertId = :concertId " +
             "AND cs.concertSchedule.concertScheduleId = :scheduleId " +
-            "AND cs.seatId = :seatId")
-    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long concertId, Long scheduleId, Long seatId);
+            "AND cs.seatId = :seatId " +
+            "AND cs.seatStatus = 'AVAILABLE' ")
+    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(@Param("concertId") Long concertId,
+                                                                          @Param("scheduleId") Long scheduleId,
+                                                                          @Param("seatId") Long seatId);
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -32,7 +36,10 @@ public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeat, Lon
     @Query("SELECT cs FROM ConcertSeat cs " +
             "WHERE cs.concert.concertId = :concertId " +
             "AND cs.concertSchedule.concertScheduleId = :scheduleId " +
-            "AND cs.seatId = :seatId")
-    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(Long concertId, Long scheduleId, Long seatId);
+            "AND cs.seatId = :seatId " +
+            "AND cs.seatStatus = 'AVAILABLE' ")
+    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(@Param("concertId") Long concertId,
+                                                                           @Param("scheduleId") Long scheduleId,
+                                                                           @Param("seatId") Long seatId);
 
 }

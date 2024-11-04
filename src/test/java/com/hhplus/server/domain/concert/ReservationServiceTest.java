@@ -19,9 +19,6 @@ import static org.mockito.Mockito.when;
 class ReservationServiceTest {
 
     @Mock
-    private ReservationReader reservationReader;
-
-    @Mock
     private ReservationWriter reservationWriter;
 
     @InjectMocks

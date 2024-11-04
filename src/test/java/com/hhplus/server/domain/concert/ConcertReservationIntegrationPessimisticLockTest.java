@@ -5,12 +5,11 @@ import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
 import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
-import com.hhplus.server.domain.waitingQueue.WaitingQueueWriter;
 import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
-import com.hhplus.server.infra.concert.ReservationReaderImpl;
 import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,8 +21,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 public class ConcertReservationIntegrationPessimisticLockTest {
@@ -32,10 +29,6 @@ public class ConcertReservationIntegrationPessimisticLockTest {
     private ReservationFacade reservationFacade;
     @Autowired
     private ConcertWriter concertWriter;
-    @Autowired
-    private WaitingQueueWriter waitingQueueWriter;
-    @Autowired
-    private ReservationReaderImpl reservationReaderImpl;
     @Autowired
     private UserService userService;
     @Autowired
@@ -99,7 +92,8 @@ public class ConcertReservationIntegrationPessimisticLockTest {
     }
 
     @Test
-    void 콘서트예약_동시10개요청_예약한개_성공() throws InterruptedException {
+    @DisplayName("콘서트 좌석 예약 동시 10명 요청시 비관적락 적용으로 예약 한건 성공")
+    void given10UserRequest1ConcertSeat_whenConcertReservationWithPessimisticLock_thenSuccess1User() throws InterruptedException {
         // given
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         CountDownLatch latch = new CountDownLatch(THREAD_COUNT);

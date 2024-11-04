@@ -6,6 +6,7 @@ import com.hhplus.server.domain.concert.model.Concert;
 import com.hhplus.server.domain.concert.model.ConcertSchedule;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
 import com.hhplus.server.domain.concert.model.SeatStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,10 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,14 +28,12 @@ class ConcertServiceTest {
     @Mock
     private ConcertReader concertReader;
 
-    @Mock
-    private ConcertWriter concertWriter;
-
     @InjectMocks
     private ConcertService concertService;
 
     @Test
-    void 존재하는콘서트아이디_콘서트스케줄_조회_성공() {
+    @DisplayName("존재하는 콘서트아이디로 콘서트 스케줄 정보 조회 성공")
+    void givenExistConcertId_whenRequestConcertSchedule_thenConcertScheduleInfoResponseSuccess() {
         // given
         long concertId = 1;
         Concert concert = new Concert(concertId, "concert1");
@@ -62,7 +59,8 @@ class ConcertServiceTest {
     }
 
     @Test
-    void 예약가능한_콘서트좌석_존재할때_조회_성공() {
+    @DisplayName("예약 가능한 콘서트 좌석 존재시 존재하는 콘서트 좌석 조회 성공")
+    void givenExistConcertIdAndScheduleId_whenRequestExistConcertSeats_thenConcertSeatListResponseSuccess() {
         // given
         long concertId = 152;
         Concert concert = new Concert(concertId, "concert1");
@@ -87,7 +85,8 @@ class ConcertServiceTest {
     }
 
     @Test
-    void 예약가능한_콘서트좌석_없음_조회_성공() {
+    @DisplayName("존재하는 콘서트의 예약 가능한 좌석 조회시 예약 가능한 좌석이 없음")
+    void givenExistConcertSchedule_whenRequestAvailableSeats_thenAvailableSeatsListSizeZero() {
         // given
         long concertId = 152;
         Concert concert = new Concert(concertId, "concert1");

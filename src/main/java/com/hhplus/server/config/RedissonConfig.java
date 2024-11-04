@@ -11,23 +11,20 @@ import org.springframework.context.annotation.Configuration;
 public class RedissonConfig {
 
     @Value("${spring.data.redis.host}")
-    private String host;
+    private String redisHost;
 
     @Value("${spring.data.redis.port}")
-    private int port;
+    private int redisPort;
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
 
     @Bean
     public RedissonClient redissonClient() {
+        RedissonClient redisson = null;
         Config config = new Config();
-
-        // 단일 노드 설정
-        config.useSingleServer()
-                .setAddress(REDISSON_HOST_PREFIX + host + ":" + port)
-                .setDatabase(0);
-
-        return Redisson.create(config);
+        config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort);
+        redisson = Redisson.create(config);
+        return redisson;
     }
 
 }

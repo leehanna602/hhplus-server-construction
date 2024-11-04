@@ -33,15 +33,14 @@ public class ReservationFacade {
     }
 
     /* 분산락과 낙관적락 */
-    @Transactional
     public ReservationInfo findConcertSeatForReservationWithDistributedLock(ReservationReq reservationReq) {
         User user = userService.getUser(reservationReq.userId());
 
         // 예약
-        ConcertSeat concertSeatForReservation = reservationDistributedLockService.findConcertSeatForReservationWithDistributedLock(
-                reservationReq.concertId(), reservationReq.scheduleId(), reservationReq.seatId());
+        ReservationInfo reservationInfo = reservationDistributedLockService.findConcertSeatForReservationWithDistributedLock(
+                user, reservationReq.concertId(), reservationReq.scheduleId(), reservationReq.seatId());
 
-        return reservationService.concertSeatTemporalReservation(user, concertSeatForReservation);
+        return reservationInfo;
     }
 
 
