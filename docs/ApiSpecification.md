@@ -78,7 +78,6 @@
   ```json
   {
     "userId": 1952,
-    "token": "eyJhbGciOiJIUzI1...",
     "concertId": 586,
     "scheduleId": 35,
     "seatId": 1
@@ -135,7 +134,6 @@
   ```json
   {
     "userId": 1952,
-    "token": "eyJhbGciOiJIUzI1...",
     "reservationId": 1233
   }
   ```
