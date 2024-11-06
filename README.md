@@ -39,6 +39,12 @@
 - 시나리오별 동시성 통합 테스트 작성
 - Chapter 2 회고록 작성
 
+### **`STEP 11`**
+- 나의 시나리오에서 발생할 수 있는 동시성 이슈에 대해 파악하고 가능한 동시성 제어 방식들을 도입해보고 각각의 장단점을 파악한 내용을 정리 (구현의 복잡도, 성능, 효율성 등)
+
+### **`STEP 12`**
+- **DB Lock 을 활용한 동시성 제어 방식** 에서 해당 비즈니스 로직에서 적합하다고 판단하여 차용한 동시성 제어 방식을 구현하여 비즈니스 로직에 적용하고, 통합테스트 등으로 이를 검증
+
 ## ✅ 설계
 ### **`Milestone`**
 * [Milestone.md](docs/Milestone.md)
@@ -56,8 +62,11 @@
 * Clean Architecture + Layered Architecture
 
 ## ✅ API Swagger
-* http://localhost:8080/swagger-ui/index.html
+* http://localhost:8080/swagger-ui/index.html <br>
 <img src="/docs/swagger.png" width="500px" title="swagger"/>
 
 ## ✅ 회고록
-* [회고록.md](docs%2F%C8%B8%B0%ED%B7%CF.md)
+* [memoirs.md](docs%2Fmemoirs.md)
+
+## ✅ 동시성 제어 방식
+* [ConcurrencyControl.md](docs%2FConcurrencyControl%2FConcurrencyControl.md)

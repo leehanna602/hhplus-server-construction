@@ -25,7 +25,7 @@ public class PointController {
     /* 포인트 충전 */
     @PostMapping("/{userId}")
     public ResponseEntity<PointRes> chargePoint(@RequestBody ChargePointReq chargePointReq) {
-        UserPointInfo userPointInfo = pointFacade.chargePoint(chargePointReq.userId(), chargePointReq.amount(), chargePointReq.type());
+        UserPointInfo userPointInfo = pointFacade.pointTransaction(chargePointReq.userId(), chargePointReq.amount(), chargePointReq.type());
         return ResponseEntity.ok(new PointRes(chargePointReq.userId(), userPointInfo.point()));
     }
 

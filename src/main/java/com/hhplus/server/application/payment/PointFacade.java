@@ -8,7 +8,6 @@ import com.hhplus.server.domain.payment.model.Point;
 import com.hhplus.server.domain.payment.model.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -24,9 +23,15 @@ public class PointFacade {
         return new UserPointInfo(point.getUser().getUserId(), point.getPoint());
     }
 
-    @Transactional
-    public UserPointInfo chargePoint(Long userId, int amount, TransactionType type) {
-        Point point = pointService.pointTransaction(userId, amount, type);
+    public UserPointInfo pointTransaction(Long userId, int amount, TransactionType type) {
+        Point point = null;
+        if (type.equals(TransactionType.CHARGE)) {
+            point = pointService.pointChargeTransaction(userId, amount, type);
+
+        }
+        if (type.equals(TransactionType.USE)) {
+            point = pointService.pointUseTransaction(userId, amount, type);
+        }
         return new UserPointInfo(point.getUser().getUserId(), point.getPoint());
     }
 

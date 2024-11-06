@@ -35,7 +35,7 @@ public class PaymentFacade {
         Reservation reservation = reservationService.validateReservationId(reservationId);
 
         // 포인트 차감 및 히스토리, 결제 내역 생성
-        Point point = pointService.pointTransaction(userId, reservation.getSeat().getPrice(), TransactionType.USE);
+        Point point = pointService.pointUseTransaction(userId, reservation.getSeat().getPrice(), TransactionType.USE);
         paymentService.completePayment(user, reservation, point);
 
         // 좌석 상태와 예약 상태 완료 처리

@@ -30,6 +30,9 @@ public class Point extends BaseEntity {
     @Column(name = "point")
     private int point;
 
+    @Version
+    private Long version;
+
     private static final long maxPoint = 1000000;
 
     public void validateTransaction(long currentAmount, long amount, TransactionType type) {

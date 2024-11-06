@@ -56,7 +56,7 @@ public class ConcertService {
 
     @Transactional
     public ConcertSeat findConcertSeatForReservation(Long concertId, Long scheduleId, Long seatId) {
-        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithLock(concertId, scheduleId, seatId)
+        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, seatId)
                 .orElseThrow(() -> new CommonException(ConcertErrorCode.INVALID_SEAT));
 
         concertSeat.temporaryReserved();
