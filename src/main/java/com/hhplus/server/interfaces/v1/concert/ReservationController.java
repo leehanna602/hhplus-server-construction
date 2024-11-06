@@ -18,7 +18,7 @@ public class ReservationController {
     /* 좌석 예약 요청 */
     @PostMapping("/seat")
     public ResponseEntity<ReservationRes> reservation(@RequestHeader("token") String token, @RequestBody ReservationReq reservationReq) {
-        ReservationInfo reservationInfo = reservationFacade.concertSeatReservation(reservationReq);
+        ReservationInfo reservationInfo = reservationFacade.findConcertSeatForReservationWithDistributedLock(reservationReq);
         ReservationRes reservationRes = new ReservationRes(reservationInfo.reservationId(), reservationInfo.seatId(),
                 reservationInfo.status(), reservationInfo.expiredDt().toString());
         return ResponseEntity.ok(reservationRes);

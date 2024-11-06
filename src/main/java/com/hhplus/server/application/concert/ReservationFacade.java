@@ -1,6 +1,7 @@
 package com.hhplus.server.application.concert;
 
-import com.hhplus.server.domain.concert.ConcertService;
+import com.hhplus.server.domain.concert.ConcertReservationDistributedLockService;
+import com.hhplus.server.domain.concert.ConcertReservationPessimisticLockService;
 import com.hhplus.server.domain.concert.ReservationService;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
@@ -15,18 +16,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class ReservationFacade {
     private final UserService userService;
-    private final ConcertService concertService;
     private final ReservationService reservationService;
+    private final ConcertReservationPessimisticLockService reservationPessimisticLockService;
+    private final ConcertReservationDistributedLockService reservationDistributedLockService;
 
+    /* 비관적락 */
     @Transactional
-    public ReservationInfo concertSeatReservation(ReservationReq reservationReq) {
+    public ReservationInfo concertSeatReservationWithPessimisticLock(ReservationReq reservationReq) {
         User user = userService.getUser(reservationReq.userId());
 
         // 예약
-        ConcertSeat concertSeatForReservation = concertService.findConcertSeatForReservation(
+        ConcertSeat concertSeatForReservation = reservationPessimisticLockService.findConcertSeatForReservationWithPessimisticLock(
                 reservationReq.concertId(), reservationReq.scheduleId(), reservationReq.seatId());
 
         return reservationService.concertSeatTemporalReservation(user, concertSeatForReservation);
     }
+
+    /* 분산락과 낙관적락 */
+    public ReservationInfo findConcertSeatForReservationWithDistributedLock(ReservationReq reservationReq) {
+        User user = userService.getUser(reservationReq.userId());
+
+        // 예약
+        ReservationInfo reservationInfo = reservationDistributedLockService.findConcertSeatForReservationWithDistributedLock(
+                user, reservationReq.concertId(), reservationReq.scheduleId(), reservationReq.seatId());
+
+        return reservationInfo;
+    }
+
+
+
 
 }

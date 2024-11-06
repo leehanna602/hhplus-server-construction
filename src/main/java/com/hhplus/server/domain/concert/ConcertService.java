@@ -1,7 +1,5 @@
 package com.hhplus.server.domain.concert;
 
-import com.hhplus.server.domain.support.exception.CommonException;
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ConcertScheduleInfo;
 import com.hhplus.server.domain.concert.dto.ConcertSeatInfo;
 import com.hhplus.server.domain.concert.model.Concert;
@@ -52,16 +50,6 @@ public class ConcertService {
 
         return new ConcertSeatInfo(concertId, scheduleId, concertSchedule.getTotalSeat(),
                 concertSeatsList.size(), concertSeatsList);
-    }
-
-    @Transactional
-    public ConcertSeat findConcertSeatForReservation(Long concertId, Long scheduleId, Long seatId) {
-        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, seatId)
-                .orElseThrow(() -> new CommonException(ConcertErrorCode.INVALID_SEAT));
-
-        concertSeat.temporaryReserved();
-        concertSeat = concertWriter.save(concertSeat);
-        return concertSeat;
     }
 
     @Transactional

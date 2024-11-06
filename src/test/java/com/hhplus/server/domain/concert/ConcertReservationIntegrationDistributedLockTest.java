@@ -1,16 +1,18 @@
 package com.hhplus.server.domain.concert;
 
 import com.hhplus.server.application.concert.ReservationFacade;
-import com.hhplus.server.domain.concert.model.*;
+import com.hhplus.server.domain.concert.model.Concert;
+import com.hhplus.server.domain.concert.model.ConcertSchedule;
+import com.hhplus.server.domain.concert.model.ConcertSeat;
+import com.hhplus.server.domain.concert.model.SeatStatus;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
 import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
-import com.hhplus.server.domain.waitingQueue.WaitingQueueWriter;
 import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
-import com.hhplus.server.infra.concert.ReservationReaderImpl;
 import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,20 +24,14 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-public class ConcertReservationIntegrationTest {
+public class ConcertReservationIntegrationDistributedLockTest {
 
     @Autowired
     private ReservationFacade reservationFacade;
     @Autowired
     private ConcertWriter concertWriter;
-    @Autowired
-    private WaitingQueueWriter waitingQueueWriter;
-    @Autowired
-    private ReservationReaderImpl reservationReaderImpl;
     @Autowired
     private UserService userService;
     @Autowired
@@ -93,12 +89,14 @@ public class ConcertReservationIntegrationTest {
                 .seatNum(1)
                 .price(5000)
                 .seatStatus(SeatStatus.AVAILABLE)
+                .version(1L)
                 .build();
         concertWriter.save(concertSeat);
     }
 
     @Test
-    void 콘서트예약_동시10개요청_예약한개_성공() throws InterruptedException {
+    @DisplayName("콘서트 좌석 예약 동시 10명 요청시 분산락 적용으로 예약 한건 성공")
+    void given10UserRequest1ConcertSeat_whenConcertReservationWithDistributedLock_thenSuccess1User() throws InterruptedException {
         // given
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
@@ -119,7 +117,7 @@ public class ConcertReservationIntegrationTest {
                             concertSeat.getSeatId()
                     );
 
-                    reservationFacade.concertSeatReservation(request);
+                    reservationFacade.findConcertSeatForReservationWithDistributedLock(request);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     synchronized (exceptions) {

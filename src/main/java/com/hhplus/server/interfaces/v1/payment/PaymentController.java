@@ -18,7 +18,7 @@ public class PaymentController {
     /* 결제 */
     @PostMapping("")
     public ResponseEntity<PaymentRes> payment(@RequestHeader("token") String token, @RequestBody PaymentReq paymentReq) {
-        PaymentInfo paymentInfo = paymentFacade.concertPayment(paymentReq.userId(), paymentReq.token(), paymentReq.reservationId());
+        PaymentInfo paymentInfo = paymentFacade.concertPayment(paymentReq.userId(), token, paymentReq.reservationId());
         return ResponseEntity.ok(new PaymentRes(paymentInfo.userId(), paymentInfo.status()));
     }
 

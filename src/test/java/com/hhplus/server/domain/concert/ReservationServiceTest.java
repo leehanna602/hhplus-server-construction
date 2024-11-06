@@ -19,9 +19,6 @@ import static org.mockito.Mockito.when;
 class ReservationServiceTest {
 
     @Mock
-    private ReservationReader reservationReader;
-
-    @Mock
     private ReservationWriter reservationWriter;
 
     @InjectMocks
@@ -35,7 +32,7 @@ class ReservationServiceTest {
         ConcertSchedule concertSchedule = new ConcertSchedule(1L, concert,
                 LocalDateTime.of(2024, 12, 10, 12, 0, 0), 50);
 
-        ConcertSeat concertSeat = new ConcertSeat(1L, concert, concertSchedule, 5, 15000, SeatStatus.AVAILABLE);
+        ConcertSeat concertSeat = new ConcertSeat(1L, concert, concertSchedule, 5, 15000, SeatStatus.AVAILABLE, 1L);
         Reservation reservation = new Reservation(1L, user, concertSeat, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5), ReservationStatus.TEMPORARY);
         when(reservationWriter.save(any(Reservation.class))).thenReturn(reservation);
 

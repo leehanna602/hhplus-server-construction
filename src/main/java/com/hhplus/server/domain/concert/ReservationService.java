@@ -23,12 +23,10 @@ public class ReservationService {
     public ReservationInfo concertSeatTemporalReservation(User user, ConcertSeat concertSeat) {
         Reservation reservation = new Reservation(user, concertSeat);
         reservation = reservationWriter.save(reservation);
-        ReservationInfo reservationInfo = new ReservationInfo(
+        return new ReservationInfo(
                 reservation.getReservationId(), reservation.getSeat().getSeatId(),
                 reservation.getReservationStatus(), reservation.getReservationExpireDt()
         );
-
-        return reservationInfo;
     }
 
     @Transactional(readOnly = true)
