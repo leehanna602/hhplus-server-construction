@@ -103,12 +103,10 @@ public class ConcertReservationIntegrationPessimisticLockTest {
         // when
         for (int i = 0; i < THREAD_COUNT; i++) {
             User user = userList.get(i);
-            WaitingQueue waitingQueue = waitingQueueList.get(i);
             executorService.submit(() -> {
                 try {
                     ReservationReq request = new ReservationReq(
                             user.getUserId(),
-                            waitingQueue.getToken(),
                             concert.getConcertId(),
                             concertSchedule.getConcertScheduleId(),
                             concertSeat.getSeatId()
