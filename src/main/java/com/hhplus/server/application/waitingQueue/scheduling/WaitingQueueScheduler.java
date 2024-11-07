@@ -16,17 +16,10 @@ public class WaitingQueueScheduler {
     private final WaitingQueueService waitingQueueService;
 
     /* WAITING -> ACTIVE 상태 변경 */
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "*/10 * * * * *")
     @Transactional
     public void updateWaitingQueue() {
         waitingQueueService.tokenProgressWaitingToActive();
-    }
-
-    /* WAITING, ACTIVE -> EXPIRED 상태 변경 */
-    @Scheduled(cron = "*/20 * * * * *")
-    @Transactional
-    public void expiredWaitingQueue() {
-        waitingQueueService.expiredToken();
     }
 
 }
