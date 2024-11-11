@@ -37,7 +37,7 @@
 
 ### `3. 예약 가능 날짜 조회`
 * Method: `GET`
-* URL: `/v1/concert/scheduled/{concertId}`
+* URL: `/v1/concerts/{concertId}/scheduled`
 * Description: 예약 가능한 날짜 조회
 * Response
   ```json
@@ -58,7 +58,7 @@
 
 ### `4. 예약 가능 좌석 조회`
 * Method: `GET`
-* URL: `/v1/concert/{concertId}/{scheduleId}/seats`
+* URL: `/v1/concerts/{concertId}/{scheduleId}/seats`
 * Description: 예약 가능한 좌석 조회
 * Response
   ```json
