@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -31,5 +32,16 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         return redisTemplate;
     }
+
+    @Bean
+    public RedisScript<Boolean> queueTransferScript() {
+        return RedisScript.of(BATCH_TRANSFER_SCRIPT, Boolean.class);
+    }
+
+    private static final String BATCH_TRANSFER_SCRIPT = """
+            -- 대기열에서 제거하고 활성 큐에 추가
+            redis.call('ZREM', KEYS[1], ARGV[1])
+            return redis.call('SADD', KEYS[2], ARGV[1])
+            """;
 
 }
