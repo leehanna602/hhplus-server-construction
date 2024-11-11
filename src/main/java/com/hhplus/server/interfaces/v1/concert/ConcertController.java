@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/concert")
+@RequestMapping("/v1/concerts")
 public class ConcertController {
 
     private final ConcertFacade concertFacade;
 
     /* 예약 가능 날짜 조회 */
-    @GetMapping("/scheduled/{concertId}")
+    @GetMapping("/{concertId}/scheduled")
     public ResponseEntity<ConcertScheduleRes> getAvailableDates(@PathVariable long concertId) {
         ConcertScheduleInfo concertScheduleInfo = concertFacade.getConcertSchedule(concertId);
 

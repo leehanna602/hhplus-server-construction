@@ -1,96 +1,76 @@
 package com.hhplus.server.domain.waitingQueue;
 
-import com.hhplus.server.domain.support.exception.CommonException;
 import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
+import com.hhplus.server.domain.support.exception.CommonException;
 import com.hhplus.server.domain.waitingQueue.dto.WaitingQueueInfo;
 import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class WaitingQueueService {
 
-    private final WaitingQueueReader waitingQueueReader;
-    private final WaitingQueueWriter waitingQueueWriter;
+    private final RedisTokenWaitingQueue redisTokenWaitingQueue;
 
-    private static final int activeProgressUserNumber = 50;
+    private static final int WAITING_TO_ACTIVE_USER_NUMBER = 50;
 
-    @Transactional
-    public WaitingQueueInfo getWaitingQueueInfo(String token) {
-        WaitingQueue waitingQueue;
-        Optional<WaitingQueue> existWaitingQueue = waitingQueueReader.findByToken(token);
+    public WaitingQueueInfo generateToken() {
+        WaitingQueue waitingQueue = WaitingQueue.of();
+        log.info("waiting queue generate token: {}", waitingQueue);
 
-        // token 존재
-        if (existWaitingQueue.isPresent()) {
-            waitingQueue = existWaitingQueue.get();
-            waitingQueue.validateToken();
-        } else {
-            if (token != null) {
+        // waitingQueue TTL 설정 (1시간)
+        redisTokenWaitingQueue.addWaitingQueueToken(waitingQueue, 3600, TimeUnit.SECONDS);
+
+        Long rank = redisTokenWaitingQueue.getWaitingQueueTokenRank(waitingQueue.token());
+        return new WaitingQueueInfo(waitingQueue.token(), ProgressStatus.WAITING, rank);
+    }
+
+
+    public WaitingQueueInfo getTokenStatus(String token) {
+        Long rank = redisTokenWaitingQueue.getWaitingQueueTokenRank(token);
+        log.info("rank: {}", rank);
+
+        // Waiting queue에서 확인 후, 없으면 Active queue에서 확인
+        if (rank == null) {
+            if (Boolean.TRUE.equals(redisTokenWaitingQueue.isActiveToken(token))) {
+                return new WaitingQueueInfo(token, ProgressStatus.ACTIVE, 0L);
+            } else {
                 throw new CommonException(WaitingQueueErrorCode.INVALID_TOKEN);
             }
-            // token 생성
-            waitingQueue = waitingQueueWriter.save(new WaitingQueue());
         }
 
-        Long waitingNum = waitingQueueReader.getWaitingNum(waitingQueue.getQueueId());
-        return new WaitingQueueInfo(
-                waitingQueue.getQueueId(),
-                waitingQueue.getToken(),
-                waitingQueue.getProgress(),
-                waitingQueue.getExpiredAt(),
-                waitingNum
-        );
+        return new WaitingQueueInfo(token, ProgressStatus.WAITING, rank);
     }
 
-    @Transactional(readOnly = true)
-    public boolean validateActiveToken(String token) {
-        Optional<WaitingQueue> waitingQueue = waitingQueueReader.findByTokenAndProgress(token, ProgressStatus.ACTIVE);
-        return waitingQueue.isPresent();
+
+    public Boolean validateActiveToken(String token) {
+        return redisTokenWaitingQueue.isActiveToken(token);
     }
 
-    @Transactional
+
     public void tokenProgressWaitingToActive() {
-        List<WaitingQueue> waitingList = waitingQueueReader.findByProgressOrderByQueueIdAsc(ProgressStatus.WAITING);
-        List<WaitingQueue> activeList = waitingQueueReader.findByProgressOrderByQueueIdAsc(ProgressStatus.ACTIVE);
+        // 호출할 때마다 정해진 인원만큼 Waiting queue에서 Active queue로 이동
+        Set<String> waitingQueueTokens = redisTokenWaitingQueue.getWaitingToActiveUsers(WAITING_TO_ACTIVE_USER_NUMBER);
 
-        int addActiveNumber = activeProgressUserNumber - activeList.size();
-        if (!waitingList.isEmpty() && addActiveNumber > 0) {
-            for (WaitingQueue waitingQueue : waitingList) {
-                waitingQueue.waitingToActiveToken();
-                waitingQueueWriter.save(waitingQueue);
-            }
+        // activeQueue TTL 설정 (1시간)
+        redisTokenWaitingQueue.setExpireActiveQueue(3600, TimeUnit.SECONDS);
+
+        assert waitingQueueTokens != null;
+        for (String token : waitingQueueTokens) {
+            redisTokenWaitingQueue.transferWaitingToActiveQueue(token);
         }
     }
 
-    @Transactional
-    public void expiredToken() {
-        List<WaitingQueue> toExpiredList = waitingQueueReader.findWaitingQueueToExpired();
-        for (WaitingQueue waitingQueue : toExpiredList) {
-            waitingQueue.expireToken();
-            waitingQueueWriter.save(waitingQueue);
-        }
-    }
 
-    @Transactional
-    public void expiredToken(String token) {
-        Optional<WaitingQueue> findWaitingQueue = waitingQueueReader.findByToken(token);
-        if (findWaitingQueue.isPresent()) {
-            WaitingQueue waitingQueue = findWaitingQueue.get();
-            waitingQueue.expireToken();
-            waitingQueueWriter.save(waitingQueue);
-        }
-    }
-
-    public WaitingQueue save(WaitingQueue waitingQueue) {
-        return waitingQueueWriter.save(waitingQueue);
+    public void removeActiveToken(String token) {
+        redisTokenWaitingQueue.removeActiveToken(token);
     }
 
 }

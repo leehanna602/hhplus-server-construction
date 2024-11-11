@@ -4,9 +4,6 @@ import com.hhplus.server.application.concert.ReservationFacade;
 import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
-import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
-import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
-import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;
 import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,35 +28,23 @@ public class ConcertReservationIntegrationPessimisticLockTest {
     private ConcertWriter concertWriter;
     @Autowired
     private UserService userService;
-    @Autowired
-    private WaitingQueueService waitingQueueService;
 
     private static final int THREAD_COUNT = 10;
     private Concert concert;
     private ConcertSchedule concertSchedule;
     private ConcertSeat concertSeat;
     private List<User> userList;
-    private List<WaitingQueue> waitingQueueList;
 
 
     @BeforeEach
     void setUp() {
         userList = new ArrayList<>();
-        waitingQueueList = new ArrayList<>();
         for (long i = 0; i < THREAD_COUNT; i++) {
             User user = User.builder()
                     .userId(i)
                     .userName("Test User " + (i + 1))
                     .build();
             userList.add(userService.save(user));
-
-            WaitingQueue waitingQueue = WaitingQueue.builder()
-                    .queueId(i)
-                    .token("token" + (i + 1))
-                    .progress(ProgressStatus.ACTIVE)
-                    .expiredAt(LocalDateTime.now().plusMinutes(10))
-                    .build();
-            waitingQueueList.add(waitingQueueService.save(waitingQueue));
         }
 
         // 콘서트 생성

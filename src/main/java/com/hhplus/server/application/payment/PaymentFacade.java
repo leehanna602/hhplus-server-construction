@@ -43,7 +43,7 @@ public class PaymentFacade {
         concertService.completeStatus(reservation.getSeat());
 
         // 토큰 만료
-        waitingQueueService.expiredToken(token);
+        waitingQueueService.removeActiveToken(token);
 
         return new PaymentInfo(userId, PaymentStatus.COMPLETED);
     }

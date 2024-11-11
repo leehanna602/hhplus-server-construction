@@ -11,8 +11,12 @@ public class WaitingQueueFacade {
 
     private final WaitingQueueService waitingQueueService;
 
-    public WaitingQueueInfo getQueueStatus(String token) {
-        return waitingQueueService.getWaitingQueueInfo(token);
+    public WaitingQueueInfo generateToken() {
+        return waitingQueueService.generateToken();
+    }
+
+    public WaitingQueueInfo getTokenStatus(String token) {
+        return waitingQueueService.getTokenStatus(token);
     }
 
 }

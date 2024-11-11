@@ -1,4 +1,5 @@
 ## 😺 콘서트 예약 서비스 ERD
+* waiting_queue: redis를 사용하도록 변경
 ```mermaid
 erDiagram
     users {
