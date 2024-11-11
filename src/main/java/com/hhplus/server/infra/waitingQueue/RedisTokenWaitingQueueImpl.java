@@ -40,7 +40,7 @@ public class RedisTokenWaitingQueueImpl implements RedisTokenWaitingQueue {
 
     @Override
     public Set<String> getWaitingToActiveUsers(int waitingToActiveUserNumber) {
-        return redisTemplate.opsForZSet().range(waitingQueueKey, 0, waitingToActiveUserNumber);
+        return redisTemplate.opsForZSet().range(waitingQueueKey, 0, waitingToActiveUserNumber-1);
     }
 
     @Override
