@@ -40,13 +40,13 @@ public class ConcertReaderImpl implements ConcertReader {
     }
 
     @Override
-    public Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(Long concertId, Long scheduleId, Long seatId) {
-        return concertSeatJpaRepository.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, seatId);
+    public Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(Long seatId) {
+        return concertSeatJpaRepository.findConcertSeatForReservationWithPessimisticLock(seatId);
     }
 
     @Override
-    public Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long concertId, Long scheduleId, Long seatId) {
-        return concertSeatJpaRepository.findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, seatId);
+    public Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long seatId) {
+        return concertSeatJpaRepository.findConcertSeatForReservationWithOptimisticLock(seatId);
     }
 
 }

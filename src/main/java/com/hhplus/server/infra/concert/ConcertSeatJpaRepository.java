@@ -22,24 +22,16 @@ public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeat, Lon
 
     @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT cs FROM ConcertSeat cs " +
-            "WHERE cs.concert.concertId = :concertId " +
-            "AND cs.concertSchedule.concertScheduleId = :scheduleId " +
-            "AND cs.seatId = :seatId " +
+            "WHERE cs.seatId = :seatId " +
             "AND cs.seatStatus = 'AVAILABLE' ")
-    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(@Param("concertId") Long concertId,
-                                                                          @Param("scheduleId") Long scheduleId,
-                                                                          @Param("seatId") Long seatId);
+    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(@Param("seatId") Long seatId);
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints(@QueryHint(name = "javax.persistence.lock.timeout", value = "3000"))
     @Query("SELECT cs FROM ConcertSeat cs " +
-            "WHERE cs.concert.concertId = :concertId " +
-            "AND cs.concertSchedule.concertScheduleId = :scheduleId " +
-            "AND cs.seatId = :seatId " +
+            "WHERE cs.seatId = :seatId " +
             "AND cs.seatStatus = 'AVAILABLE' ")
-    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(@Param("concertId") Long concertId,
-                                                                           @Param("scheduleId") Long scheduleId,
-                                                                           @Param("seatId") Long seatId);
+    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(@Param("seatId") Long seatId);
 
 }

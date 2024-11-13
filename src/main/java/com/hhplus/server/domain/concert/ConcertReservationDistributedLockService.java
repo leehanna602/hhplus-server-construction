@@ -1,6 +1,6 @@
 package com.hhplus.server.domain.concert;
 
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.support.exception.CommonException;
 import com.hhplus.server.domain.user.model.User;
@@ -32,7 +32,7 @@ public class ConcertReservationDistributedLockService {
                 throw new CommonException(ConcertErrorCode.RESERVATION_LOCK_DISTRIBUTED_FAILURE);
             }
             log.info("get lock: {}", lock.getName());
-            reservationInfo = concertReservationService.executeInReservationTransaction(user, concertId, scheduleId, seatId);
+            reservationInfo = concertReservationService.executeInReservationTransaction(user, seatId);
 
         } catch (InterruptedException e) {
             log.warn("get concert seat failed", e);

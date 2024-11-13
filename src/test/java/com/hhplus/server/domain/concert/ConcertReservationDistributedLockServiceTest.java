@@ -71,7 +71,7 @@ class ConcertReservationDistributedLockServiceTest {
         when(lock.tryLock(waitTime, leaseTime, timeUnit)).thenReturn(true);
         when(lock.isLocked()).thenReturn(true);
         when(lock.isHeldByCurrentThread()).thenReturn(true);
-        when(concertReader.findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, availableSeat.getSeatId())).thenReturn(Optional.of(availableSeat));
+        when(concertReader.findConcertSeatForReservationWithOptimisticLock(availableSeat.getSeatId())).thenReturn(Optional.of(availableSeat));
         when(concertWriter.save(any(ConcertSeat.class))).thenReturn(temporaryReservedSeat);
         when(reservationWriter.save(any(Reservation.class))).thenReturn(reservation);
 
@@ -81,7 +81,7 @@ class ConcertReservationDistributedLockServiceTest {
 
 
         // then
-        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, availableSeat.getSeatId());
+        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(availableSeat.getSeatId());
         assertNotNull(reservationInfo);
         assertEquals(availableSeat.getSeatId(), reservationInfo.seatId());
         assertEquals(temporaryReservedSeat.getSeatStatus(), SeatStatus.TEMPORARY_RESERVED);
@@ -129,11 +129,11 @@ class ConcertReservationDistributedLockServiceTest {
         when(lock.tryLock(waitTime, leaseTime, timeUnit)).thenReturn(true);
         when(lock.isLocked()).thenReturn(true);
         when(lock.isHeldByCurrentThread()).thenReturn(true);
-        when(concertReader.findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, notExistConcertSeatId)).thenReturn(Optional.empty());
+        when(concertReader.findConcertSeatForReservationWithOptimisticLock(notExistConcertSeatId)).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(CommonException.class, () -> concertService.findConcertSeatForReservationWithDistributedLock(user, concertId, scheduleId, notExistConcertSeatId));
-        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, notExistConcertSeatId);
+        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(notExistConcertSeatId);
         verify(lock).unlock();
     }
 

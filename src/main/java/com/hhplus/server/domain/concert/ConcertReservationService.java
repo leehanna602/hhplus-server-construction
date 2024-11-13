@@ -1,6 +1,6 @@
 package com.hhplus.server.domain.concert;
 
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
 import com.hhplus.server.domain.concert.model.Reservation;
@@ -21,8 +21,8 @@ public class ConcertReservationService {
     private final ReservationWriter reservationWriter;
 
     @Transactional
-    public ReservationInfo executeInReservationTransaction(User user, Long concertId, Long scheduleId, Long seatId) {
-        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithOptimisticLock(concertId, scheduleId, seatId)
+    public ReservationInfo executeInReservationTransaction(User user, Long seatId) {
+        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithOptimisticLock(seatId)
                 .orElseThrow(() -> new CommonException(ConcertErrorCode.INVALID_SEAT));
         log.info("get before seat: {}", concertSeat.getSeatStatus());
         concertSeat.temporaryReserved();

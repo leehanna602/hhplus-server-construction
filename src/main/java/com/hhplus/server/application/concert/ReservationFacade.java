@@ -26,8 +26,7 @@ public class ReservationFacade {
         User user = userService.getUser(reservationReq.userId());
 
         // 예약
-        ConcertSeat concertSeatForReservation = reservationPessimisticLockService.findConcertSeatForReservationWithPessimisticLock(
-                reservationReq.concertId(), reservationReq.scheduleId(), reservationReq.seatId());
+        ConcertSeat concertSeatForReservation = reservationPessimisticLockService.findConcertSeatForReservationWithPessimisticLock(reservationReq.seatId());
 
         return reservationService.concertSeatTemporalReservation(user, concertSeatForReservation);
     }

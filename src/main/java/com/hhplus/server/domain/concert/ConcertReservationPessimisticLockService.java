@@ -1,6 +1,6 @@
 package com.hhplus.server.domain.concert;
 
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
 import com.hhplus.server.domain.support.exception.CommonException;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class ConcertReservationPessimisticLockService {
 
     /* 비관적락 */
     @Transactional
-    public ConcertSeat findConcertSeatForReservationWithPessimisticLock(Long concertId, Long scheduleId, Long seatId) {
-        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithPessimisticLock(concertId, scheduleId, seatId)
+    public ConcertSeat findConcertSeatForReservationWithPessimisticLock(Long seatId) {
+        ConcertSeat concertSeat = concertReader.findConcertSeatForReservationWithPessimisticLock(seatId)
                 .orElseThrow(() -> new CommonException(ConcertErrorCode.INVALID_SEAT));
 
         concertSeat.temporaryReserved();
