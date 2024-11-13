@@ -58,8 +58,8 @@ Index 설정 전후 비교를 위해 ApplicationRunner를 사용하여 1000건�
 
 3. (참고) 테스트 데이터
    - concert <br>
-       <img src="/docs/index/data_concert.png" width="550px" title="concert"/>
+       <img src="/docs/Index/data_concert.png" width="550px" title="concert"/>
    - concert_schedule <br>
-       <img src="/docs/index/data_concert_schedule.png" width="550px" title="concert_schedule"/>
+       <img src="/docs/Index/data_concert_schedule.png" width="550px" title="concert_schedule"/>
    - concert_seats <br>
-     <img src="/docs/index/data_concert_seats.png" width="550px" title="concert_seats"/>
+     <img src="/docs/Index/data_concert_seats.png" width="550px" title="concert_seats"/>
