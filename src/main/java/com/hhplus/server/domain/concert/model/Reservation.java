@@ -12,7 +12,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reservation")
+@Table(
+        name = "reservation",
+        indexes = {
+                @Index(name = "reservation_user_id_IDX", columnList = "user_id"),
+                @Index(name = "reservation_seat_id_IDX", columnList = "seat_id"),
+                @Index(name = "reservation_reservation_status_IDX", columnList = "reservation_status, reservation_expire_dt")
+        }
+)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

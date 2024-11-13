@@ -8,7 +8,12 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "point_history")
+@Table(
+        name = "point_history",
+        indexes = {
+                @Index(name = "point_history_point_id_IDX", columnList = "point_id")
+        }
+)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

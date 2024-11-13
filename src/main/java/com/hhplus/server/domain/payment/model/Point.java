@@ -12,7 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "point")
+@Table(
+        name = "point",
+        indexes = {
+                @Index(name = "point_user_id_IDX", columnList = "user_id")
+        }
+)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
