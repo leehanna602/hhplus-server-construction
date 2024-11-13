@@ -42,3 +42,5 @@
 * [ConcurrencyControl.md](docs%2FConcurrencyControl%2FConcurrencyControl.md)
 ### 📒 Redis를 이용한 성능 개선
 * [RedisLogic.md](docs%2FRedis%2FRedisLogic.md)
+### 📒 DB Index 설정 및 쿼리 성능 개선
+* [Index.md](docs%2FIndex%2FIndex.md)
