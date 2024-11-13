@@ -1,6 +1,6 @@
 package com.hhplus.server.interfaces.support;
 
-import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
+import com.hhplus.server.domain.support.exception.WaitingQueueErrorCode;
 import com.hhplus.server.domain.support.exception.CommonException;
 import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
 import jakarta.servlet.http.HttpServletRequest;

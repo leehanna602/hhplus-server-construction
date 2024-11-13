@@ -1,4 +1,4 @@
-package com.hhplus.server.domain.common.exception;
+package com.hhplus.server.domain.support.exception;
 
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;

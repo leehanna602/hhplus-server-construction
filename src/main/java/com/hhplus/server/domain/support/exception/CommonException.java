@@ -1,6 +1,5 @@
 package com.hhplus.server.domain.support.exception;
 
-import com.hhplus.server.domain.common.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

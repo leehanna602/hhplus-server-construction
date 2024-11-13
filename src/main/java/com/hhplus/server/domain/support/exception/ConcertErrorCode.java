@@ -1,4 +1,4 @@
-package com.hhplus.server.domain.common.exception;
+package com.hhplus.server.domain.support.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

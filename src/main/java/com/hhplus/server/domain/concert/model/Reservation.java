@@ -1,7 +1,7 @@
 package com.hhplus.server.domain.concert.model;
 
 import com.hhplus.server.domain.support.exception.CommonException;
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import com.hhplus.server.domain.user.model.User;
 import jakarta.persistence.*;

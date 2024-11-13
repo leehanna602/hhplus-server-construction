@@ -1,6 +1,6 @@
 package com.hhplus.server.domain.waitingQueue;
 
-import com.hhplus.server.domain.common.exception.WaitingQueueErrorCode;
+import com.hhplus.server.domain.support.exception.WaitingQueueErrorCode;
 import com.hhplus.server.domain.support.exception.CommonException;
 import com.hhplus.server.domain.waitingQueue.dto.WaitingQueueInfo;
 import com.hhplus.server.domain.waitingQueue.model.ProgressStatus;
