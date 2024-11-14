@@ -106,7 +106,7 @@ Transaction의 범위에 따라 다음과 같이 성능에 영향을 줄 수 있
   }
   ```
 
-* 로직 변경 후, 테스트 코드 실행 결과
+* 로직 변경 후, 테스트 코드 실행 결과 <br>
   <img src="/docs/Transaction/reservation_test_1.png" width="500px" title="reservation_test_1"/>
   <img src="/docs/Transaction/reservation_test_2.png" width="500px" title="reservation_test_2"/>
   <img src="/docs/Transaction/reservation_test_3.png" width="500px" title="reservation_test_3"/>
@@ -221,6 +221,6 @@ Transaction의 범위에 따라 다음과 같이 성능에 영향을 줄 수 있
   }
   ```
   
-* 로직 변경 후, 테스트 코드 실행 결과
+* 로직 변경 후, 테스트 코드 실행 결과 <br>
   <img src="/docs/Transaction/payment_test_1.png" width="500px" title="payment_test_1"/>
   <img src="/docs/Transaction/payment_test_2.png" width="500px" title="payment_test_2"/>
