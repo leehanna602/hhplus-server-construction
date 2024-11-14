@@ -3,6 +3,7 @@ package com.hhplus.server.domain.concert;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.support.exception.CommonException;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +15,9 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,16 +25,10 @@ import static org.mockito.Mockito.when;
 class ConcertReservationDistributedLockServiceTest {
 
     @Mock
-    private ConcertReader concertReader;
-
-    @Mock
-    private ConcertWriter concertWriter;
-
-    @Mock
-    private ReservationWriter reservationWriter;
-
-    @Mock
     private RedissonClient redissonClient;
+
+    @Mock
+    private ConcertReservationService concertReservationService;
 
     @Mock
     private RLock lock;
@@ -65,27 +58,23 @@ class ConcertReservationDistributedLockServiceTest {
         ConcertSeat temporaryReservedSeat = new ConcertSeat(concertSeatId, concert, concertSchedule1, 1, 15000, SeatStatus.TEMPORARY_RESERVED, 1L);
 
         Reservation reservation = new Reservation(user, availableSeat);
+        ReservationInfo reservationInfo = new ReservationInfo(null, concertSeatId, ReservationStatus.TEMPORARY, LocalDateTime.now().plusMinutes(10));
 
         when(redissonClient.getLock("reserv:" + concertId + ":" + scheduleId + ":" + concertSeatId)).thenReturn(lock);
         when(lock.getName()).thenReturn("reserv:" + concertId + ":" + scheduleId + ":" + concertSeatId);
         when(lock.tryLock(waitTime, leaseTime, timeUnit)).thenReturn(true);
         when(lock.isLocked()).thenReturn(true);
+        when(concertReservationService.executeInReservationTransaction(user, concertSeatId)).thenReturn(reservationInfo);
         when(lock.isHeldByCurrentThread()).thenReturn(true);
-        when(concertReader.findConcertSeatForReservationWithOptimisticLock(availableSeat.getSeatId())).thenReturn(Optional.of(availableSeat));
-        when(concertWriter.save(any(ConcertSeat.class))).thenReturn(temporaryReservedSeat);
-        when(reservationWriter.save(any(Reservation.class))).thenReturn(reservation);
-
 
         // when
-        ReservationInfo reservationInfo = concertService.findConcertSeatForReservationWithDistributedLock(user, concertId, scheduleId, temporaryReservedSeat.getSeatId());
-
+        ReservationInfo reservationInfoResult = concertService.findConcertSeatForReservationWithDistributedLock(user, concertId, scheduleId, temporaryReservedSeat.getSeatId());
 
         // then
-        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(availableSeat.getSeatId());
-        assertNotNull(reservationInfo);
-        assertEquals(availableSeat.getSeatId(), reservationInfo.seatId());
+        assertNotNull(reservationInfoResult);
+        assertEquals(availableSeat.getSeatId(), reservationInfoResult.seatId());
         assertEquals(temporaryReservedSeat.getSeatStatus(), SeatStatus.TEMPORARY_RESERVED);
-        assertEquals(reservationInfo.status(), ReservationStatus.TEMPORARY);
+        assertEquals(reservationInfoResult.status(), ReservationStatus.TEMPORARY);
         verify(lock).unlock();
     }
 
@@ -129,11 +118,10 @@ class ConcertReservationDistributedLockServiceTest {
         when(lock.tryLock(waitTime, leaseTime, timeUnit)).thenReturn(true);
         when(lock.isLocked()).thenReturn(true);
         when(lock.isHeldByCurrentThread()).thenReturn(true);
-        when(concertReader.findConcertSeatForReservationWithOptimisticLock(notExistConcertSeatId)).thenReturn(Optional.empty());
+        when(concertReservationService.executeInReservationTransaction(user, notExistConcertSeatId)).thenThrow(new CommonException(ConcertErrorCode.INVALID_SEAT));
 
         // when & then
         assertThrows(CommonException.class, () -> concertService.findConcertSeatForReservationWithDistributedLock(user, concertId, scheduleId, notExistConcertSeatId));
-        verify(concertReader).findConcertSeatForReservationWithOptimisticLock(notExistConcertSeatId);
         verify(lock).unlock();
     }
 
