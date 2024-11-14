@@ -65,4 +65,18 @@ public class ConcertService {
         concertWriter.save(concertSeat);
     }
 
+    @Transactional
+    public Concert save(Concert concert) {
+        return concertWriter.save(concert);
+    }
+
+    @Transactional
+    public ConcertSchedule save(ConcertSchedule concertSchedule) {
+        return concertWriter.save(concertSchedule);
+    }
+
+    @Transactional
+    public ConcertSeat save(ConcertSeat concertSeat) {
+        return concertWriter.save(concertSeat);
+    }
 }
