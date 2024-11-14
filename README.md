@@ -44,3 +44,5 @@
 * [RedisLogic.md](docs%2FRedis%2FRedisLogic.md)
 ### 📒 DB Index 설정 및 쿼리 성능 개선
 * [Index.md](docs%2FIndex%2FIndex.md)
+### 📒 Transaction 분리를 통한 개선
+* [Transaction.md](docs%2FTransaction%2FTransaction.md)
