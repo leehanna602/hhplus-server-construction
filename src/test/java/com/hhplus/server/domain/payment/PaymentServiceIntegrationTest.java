@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class PaymentTransactionIntegrationTest {
+public class PaymentServiceIntegrationTest {
 
     @Autowired
     private PaymentFacade paymentFacade;
