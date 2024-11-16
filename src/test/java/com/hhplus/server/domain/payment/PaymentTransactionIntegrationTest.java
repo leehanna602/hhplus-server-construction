@@ -3,6 +3,8 @@ package com.hhplus.server.domain.payment;
 import com.hhplus.server.application.payment.PaymentFacade;
 import com.hhplus.server.domain.concert.ConcertService;
 import com.hhplus.server.domain.concert.model.*;
+import com.hhplus.server.domain.payment.applicationEvent.PaymentEventListener;
+import com.hhplus.server.domain.payment.applicationEvent.PaymentEventPublisher;
 import com.hhplus.server.domain.payment.dto.PaymentInfo;
 import com.hhplus.server.domain.payment.model.PaymentStatus;
 import com.hhplus.server.domain.payment.model.Point;
@@ -14,10 +16,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -44,6 +50,13 @@ public class PaymentTransactionIntegrationTest {
     private ConcertService concertService;
     @Autowired
     private ReservationJpaRepository reservationJpaRepository;
+
+    @SpyBean
+    private PaymentEventPublisher paymentEventPublisher;
+
+    @SpyBean
+    private PaymentEventListener paymentEventListener;
+
 
     @BeforeEach
     void setUp() {
@@ -103,7 +116,7 @@ public class PaymentTransactionIntegrationTest {
 
     @Test
     @DisplayName("사용자가 콘서트 임시예약 건을 결제 요청했을 때 정상적으로 결제 완료와 결제 완료 이벤트가 발행된다.")
-    void concurrentPointChargeWithOptimisticLockFailure() {
+    void concurrentPointChargeWithOptimisticLockFailure() throws InterruptedException {
         // given
         String token = UUID.randomUUID().toString();
 
@@ -112,6 +125,10 @@ public class PaymentTransactionIntegrationTest {
 
         // then
         assertThat(paymentInfo.status()).isEqualTo(PaymentStatus.COMPLETED);
+
+        verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
+        Thread.sleep(3000);
+        verify(paymentEventListener, times(1)).paymentSuccessHandler(any(PaymentInfo.class));
     }
 
 
