@@ -1,8 +1,8 @@
 package com.hhplus.server.domain.payment.model;
 
 import com.hhplus.server.domain.support.exception.CommonException;
-import com.hhplus.server.domain.common.exception.CommonErrorCode;
-import com.hhplus.server.domain.common.exception.PaymentErrorCode;
+import com.hhplus.server.domain.support.exception.CommonErrorCode;
+import com.hhplus.server.domain.support.exception.PaymentErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import com.hhplus.server.domain.user.model.User;
 import jakarta.persistence.*;
@@ -12,7 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "point")
+@Table(
+        name = "point",
+        indexes = {
+                @Index(name = "point_user_id_IDX", columnList = "user_id")
+        }
+)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

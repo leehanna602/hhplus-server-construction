@@ -1,6 +1,6 @@
 package com.hhplus.server.interfaces.support.advice;
 
-import com.hhplus.server.domain.common.exception.ErrorCode;
+import com.hhplus.server.domain.support.exception.ErrorCode;
 import com.hhplus.server.domain.support.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

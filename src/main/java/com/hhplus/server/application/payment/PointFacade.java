@@ -1,7 +1,7 @@
 package com.hhplus.server.application.payment;
 
 import com.hhplus.server.domain.support.exception.CommonException;
-import com.hhplus.server.domain.common.exception.PaymentErrorCode;
+import com.hhplus.server.domain.support.exception.PaymentErrorCode;
 import com.hhplus.server.domain.payment.PointService;
 import com.hhplus.server.domain.payment.dto.UserPointInfo;
 import com.hhplus.server.domain.payment.model.Point;

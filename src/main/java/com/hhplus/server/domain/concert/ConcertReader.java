@@ -17,7 +17,7 @@ public interface ConcertReader {
 
     List<ConcertSeat> getConcertSeatsBySeatStatus(ConcertSchedule concertSchedule, SeatStatus seatStatus);
 
-    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(Long concertId, Long scheduleId, Long seatId);
+    Optional<ConcertSeat> findConcertSeatForReservationWithPessimisticLock(Long seatId);
 
-    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long concertId, Long scheduleId, Long seatId);
+    Optional<ConcertSeat> findConcertSeatForReservationWithOptimisticLock(Long seatId);
 }

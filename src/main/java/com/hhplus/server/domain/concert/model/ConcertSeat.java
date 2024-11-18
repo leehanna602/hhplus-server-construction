@@ -1,7 +1,7 @@
 package com.hhplus.server.domain.concert.model;
 
 import com.hhplus.server.domain.support.exception.CommonException;
-import com.hhplus.server.domain.common.exception.ConcertErrorCode;
+import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "concert_seats")
+@Table(
+        name = "concert_seats",
+        indexes = {
+                @Index(name = "concert_seats_concert_id_IDX", columnList = "concert_id"),
+                @Index(name = "concert_seats_concert_schedule_id_IDX", columnList = "concert_schedule_id"),
+                @Index(name = "concert_seats_concert_schedule_id_seat_status_IDX", columnList = "concert_schedule_id, seat_status")
+        }
+)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

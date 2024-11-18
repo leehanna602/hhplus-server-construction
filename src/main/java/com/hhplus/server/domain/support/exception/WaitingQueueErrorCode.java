@@ -1,11 +1,10 @@
-package com.hhplus.server.domain.common.exception;
+package com.hhplus.server.domain.support.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 
-import static org.springframework.boot.logging.LogLevel.ERROR;
 import static org.springframework.boot.logging.LogLevel.WARN;
 
 
