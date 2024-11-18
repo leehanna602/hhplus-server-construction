@@ -1,5 +1,6 @@
 package com.hhplus.server.domain.concert;
 
+import com.hhplus.server.config.distributedLock.DistributedLock;
 import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.support.exception.CommonException;
@@ -20,8 +21,19 @@ public class ConcertReservationDistributedLockService {
     private final ConcertReservationService concertReservationService;
     private final RedissonClient redissonClient;
 
-    /* 분산락 */
+    /* 분산락 - 어노테이션 적용*/
+    @DistributedLock(key = "'reserve:'.concat(#concertId).concat(':').concat(#scheduleId).concat(':').concat(#seatId)")
     public ReservationInfo findConcertSeatForReservationWithDistributedLock(User user, Long concertId, Long scheduleId, Long seatId) {
+
+        // 어노테이션 적용 후, executeInReservationTransaction()의 로직을 여기에 구현해도 정상 동작
+        ReservationInfo reservationInfo = concertReservationService.executeInReservationTransaction(user, seatId);
+
+        return reservationInfo;
+    }
+
+
+    /* 분산락 - 어노테이션 미적용시 로직 */
+    public ReservationInfo findConcertSeatForReservationWithDistributedLockNotUseAnnotation(User user, Long concertId, Long scheduleId, Long seatId) {
         ReservationInfo reservationInfo = null;
 
         RLock lock = redissonClient.getLock("reserv:" + concertId + ":" + scheduleId + ":" + seatId);

@@ -6,6 +6,7 @@ import com.hhplus.server.domain.base.BaseEntity;
 import com.hhplus.server.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Reservation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
