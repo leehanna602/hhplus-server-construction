@@ -1,4 +1,4 @@
-package com.hhplus.server.infra.concert;
+package com.hhplus.server.infra.db.concert;
 
 import com.hhplus.server.domain.concert.model.Concert;
 import com.hhplus.server.domain.concert.model.ConcertSchedule;

@@ -10,7 +10,7 @@ import com.hhplus.server.domain.payment.model.PaymentStatus;
 import com.hhplus.server.domain.payment.model.Point;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
-import com.hhplus.server.infra.concert.ReservationJpaRepository;
+import com.hhplus.server.infra.db.concert.ReservationJpaRepository;
 import com.hhplus.server.infra.kafka.payment.PaymentKafkaProducer;
 import com.hhplus.server.interfaces.kafka.payment.PaymentKafkaConsumer;
 import org.junit.jupiter.api.BeforeEach;

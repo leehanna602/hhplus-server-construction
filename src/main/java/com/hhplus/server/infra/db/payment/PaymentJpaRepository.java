@@ -1,4 +1,4 @@
-package com.hhplus.server.infra.payment;
+package com.hhplus.server.infra.db.payment;
 
 import com.hhplus.server.domain.payment.model.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
