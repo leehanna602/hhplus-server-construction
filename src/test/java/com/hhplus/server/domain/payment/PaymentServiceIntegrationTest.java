@@ -11,6 +11,8 @@ import com.hhplus.server.domain.payment.model.Point;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
 import com.hhplus.server.infra.concert.ReservationJpaRepository;
+import com.hhplus.server.infra.kafka.payment.PaymentKafkaProducer;
+import com.hhplus.server.interfaces.kafka.payment.PaymentKafkaConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,6 +58,12 @@ public class PaymentServiceIntegrationTest {
 
     @SpyBean
     private PaymentEventListener paymentEventListener;
+
+    @SpyBean
+    private PaymentKafkaProducer paymentKafkaProducer;
+
+    @SpyBean
+    private PaymentKafkaConsumer paymentKafkaConsumer;
 
 
     @BeforeEach
@@ -127,8 +135,10 @@ public class PaymentServiceIntegrationTest {
         assertThat(paymentInfo.status()).isEqualTo(PaymentStatus.COMPLETED);
 
         verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
-        Thread.sleep(3000);
         verify(paymentEventListener, times(1)).paymentSuccessHandler(any(PaymentInfo.class));
+        verify(paymentKafkaProducer).send(paymentInfo.toString());
+        Thread.sleep(3000);
+        verify(paymentKafkaConsumer).consume(paymentInfo.toString());
     }
 
 
