@@ -106,9 +106,9 @@ public class ConcertReservationIntegrationTest {
 
         verify(reservationEventPublisher).successReservation(any(ReservationInfo.class));
         verify(reservationEventListener, times(1)).reservationSuccessHandler(any(ReservationInfo.class));
-        verify(reservationKafkaProducer).send(reservationInfo.toString());
+        verify(reservationKafkaProducer).send(reservationInfo);
         Thread.sleep(3000);
-        verify(reservationKafkaConsumer).consume(reservationInfo.toString());
+        verify(reservationKafkaConsumer).consume(reservationInfo);
     }
 
 }

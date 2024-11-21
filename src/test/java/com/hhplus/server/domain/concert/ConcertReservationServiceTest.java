@@ -1,5 +1,6 @@
 package com.hhplus.server.domain.concert;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.server.domain.concert.applicationEvent.ReservationEventPublisher;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.*;
@@ -32,7 +33,13 @@ class ConcertReservationServiceTest {
     private ReservationWriter reservationWriter;
 
     @Mock
+    private ReservationOutboxWriter reservationOutboxWriter;
+
+    @Mock
     private ReservationEventPublisher reservationEventPublisher;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private ConcertReservationService concertReservationService;
@@ -61,6 +68,7 @@ class ConcertReservationServiceTest {
 
         when(concertWriter.save(availableSeat)).thenReturn(tempReservedSeat);
         when(reservationWriter.save(Mockito.any(Reservation.class))).thenReturn(afterReservation);
+        when(reservationOutboxWriter.save(Mockito.any(ReservationOutbox.class))).thenReturn(null);
 
         // when
         ReservationInfo reservationInfoResult = concertReservationService.executeInReservationTransaction(user, concertSeatId);

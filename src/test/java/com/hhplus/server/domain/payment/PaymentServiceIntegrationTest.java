@@ -136,9 +136,9 @@ public class PaymentServiceIntegrationTest {
 
         verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
         verify(paymentEventListener, times(1)).paymentSuccessHandler(any(PaymentInfo.class));
-        verify(paymentKafkaProducer).send(paymentInfo.toString());
+        verify(paymentKafkaProducer).send(paymentInfo);
         Thread.sleep(3000);
-        verify(paymentKafkaConsumer).consume(paymentInfo.toString());
+        verify(paymentKafkaConsumer).consume(paymentInfo);
     }
 
 
