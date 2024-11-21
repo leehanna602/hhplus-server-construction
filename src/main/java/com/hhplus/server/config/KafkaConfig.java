@@ -130,7 +130,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, ReservationInfo.class);
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, PaymentInfo.class);
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
 
         return new DefaultKafkaConsumerFactory<>(

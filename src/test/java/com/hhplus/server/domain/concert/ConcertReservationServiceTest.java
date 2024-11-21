@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,15 +67,15 @@ class ConcertReservationServiceTest {
         when(concertReader.findConcertSeatForReservationWithOptimisticLock(concertSeatId)).thenReturn(Optional.of(availableSeat));
 
         when(concertWriter.save(availableSeat)).thenReturn(tempReservedSeat);
-        when(reservationWriter.save(Mockito.any(Reservation.class))).thenReturn(afterReservation);
-        when(reservationOutboxWriter.save(Mockito.any(ReservationOutbox.class))).thenReturn(null);
+        when(reservationWriter.save(any(Reservation.class))).thenReturn(afterReservation);
+        when(reservationOutboxWriter.save(any(ReservationOutbox.class))).thenReturn(null);
 
         // when
         ReservationInfo reservationInfoResult = concertReservationService.executeInReservationTransaction(user, concertSeatId);
 
         // then
         assertNotNull(reservationInfoResult);
-        verify(reservationEventPublisher).successReservation(Mockito.any(ReservationInfo.class));
+        verify(reservationEventPublisher).successReservation(any(ReservationInfo.class));
 
     }
 }

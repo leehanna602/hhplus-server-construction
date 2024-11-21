@@ -1,14 +1,13 @@
 package com.hhplus.server.domain.payment;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.server.domain.concert.ConcertService;
 import com.hhplus.server.domain.concert.ReservationService;
 import com.hhplus.server.domain.concert.model.Reservation;
 import com.hhplus.server.domain.payment.applicationEvent.PaymentEventPublisher;
 import com.hhplus.server.domain.payment.dto.PaymentInfo;
-import com.hhplus.server.domain.payment.model.Payment;
-import com.hhplus.server.domain.payment.model.PaymentStatus;
-import com.hhplus.server.domain.payment.model.Point;
-import com.hhplus.server.domain.payment.model.TransactionType;
+import com.hhplus.server.domain.payment.model.*;
 import com.hhplus.server.domain.user.model.User;
 import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,9 @@ public class PaymentService {
     private final WaitingQueueService waitingQueueService;
 
     private final PaymentEventPublisher paymentEventPublisher;
+    private final PaymentOutboxWriter paymentOutboxWriter;
+
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public PaymentInfo payment(User user, String token, Long reservationId) {
@@ -45,8 +47,16 @@ public class PaymentService {
         reservation = reservationService.completeStatus(reservation);
         concertService.completeStatus(reservation.getSeat());
 
-        // 4. 결제 완료 이벤트 발행
-        PaymentInfo paymentInfo = new PaymentInfo(user.getUserId(), PaymentStatus.COMPLETED);
+        // 4. 결제 완료 이벤트 발행 및 outbox 저장
+        PaymentInfo paymentInfo = new PaymentInfo(payment.getPaymentId(), user.getUserId(), PaymentStatus.COMPLETED);
+        try {
+            String stringPayload = objectMapper.writeValueAsString(paymentInfo);
+            paymentOutboxWriter.save(new PaymentOutbox(stringPayload, paymentInfo.paymentId()));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         paymentEventPublisher.successPayment(paymentInfo);
 
         // 5. 토큰 만료

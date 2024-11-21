@@ -1,14 +1,12 @@
 package com.hhplus.server.domain.payment;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.server.domain.concert.ConcertService;
 import com.hhplus.server.domain.concert.ReservationService;
 import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.payment.applicationEvent.PaymentEventPublisher;
 import com.hhplus.server.domain.payment.dto.PaymentInfo;
-import com.hhplus.server.domain.payment.model.Payment;
-import com.hhplus.server.domain.payment.model.PaymentStatus;
-import com.hhplus.server.domain.payment.model.Point;
-import com.hhplus.server.domain.payment.model.TransactionType;
+import com.hhplus.server.domain.payment.model.*;
 import com.hhplus.server.domain.user.model.User;
 import com.hhplus.server.domain.waitingQueue.WaitingQueueService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +45,12 @@ class PaymentServiceTest {
     @Mock
     private PaymentEventPublisher paymentEventPublisher;
 
+    @Mock
+    private PaymentOutboxWriter paymentOutboxWriter;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
     @InjectMocks
     private PaymentService paymentService;
 
@@ -71,11 +75,14 @@ class PaymentServiceTest {
         Reservation reservation = new Reservation(reservationId, user, tempReservedSeat, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5L), ReservationStatus.TEMPORARY);
 
         Point point = new Point(1L, user, 100000, 1L);
-        Payment payment = new Payment(user, reservation, reservation.getSeat().getPrice(), PaymentStatus.COMPLETED);
-        PaymentInfo paymentInfo = new PaymentInfo(user.getUserId(), PaymentStatus.COMPLETED);
+
+        Payment payment = new Payment(1L, user, reservation, reservation.getSeat().getPrice(), PaymentStatus.COMPLETED, LocalDateTime.now());
+        PaymentInfo paymentInfo = new PaymentInfo(1L, user.getUserId(), PaymentStatus.COMPLETED);
+        String paymentInfoJson = "{\"paymentId\":1,\"userId\":1,\"status\":\"COMPLETED\"}";
 
         when(reservationService.validateReservationId(reservationId)).thenReturn(reservation);
         when(pointService.pointUseTransaction(user.getUserId(), reservation.getSeat().getPrice(), TransactionType.USE)).thenReturn(point);
+        when(paymentWriter.save(any(Payment.class))).thenReturn(payment);
         when(reservationService.completeStatus(reservation)).thenReturn(reservation);
 
         // when
@@ -83,8 +90,13 @@ class PaymentServiceTest {
 
         // then
         assertNotNull(paymentResult);
+        assertEquals(1L, paymentResult.paymentId());
+        assertEquals(PaymentStatus.COMPLETED, paymentResult.status());
+
         verify(concertService).completeStatus(reservation.getSeat());
-        verify(paymentEventPublisher).successPayment(paymentInfo);
+        verify(paymentWriter).save(any(Payment.class));
+        verify(paymentOutboxWriter).save(any(PaymentOutbox.class));
+        verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
         verify(waitingQueueService).removeActiveToken(token);
     }
 
