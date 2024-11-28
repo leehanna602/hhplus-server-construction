@@ -1,9 +1,6 @@
 package com.hhplus.server.domain.concert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.server.domain.concert.applicationEvent.ReservationEventPublisher;
-import com.hhplus.server.domain.concert.model.ReservationOutbox;
 import com.hhplus.server.domain.support.exception.ConcertErrorCode;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.ConcertSeat;
@@ -23,11 +20,8 @@ public class ConcertReservationService {
     private final ConcertReader concertReader;
     private final ConcertWriter concertWriter;
     private final ReservationWriter reservationWriter;
-    private final ReservationOutboxWriter reservationOutboxWriter;
-
     private final ReservationEventPublisher reservationEventPublisher;
 
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public ReservationInfo executeInReservationTransaction(User user, Long seatId) {
@@ -50,14 +44,6 @@ public class ConcertReservationService {
         );
 
         // 4. 예약 완료 이벤트 발행 및 outbox 저장
-        try {
-            String stringPayload = objectMapper.writeValueAsString(reservationInfo);
-            reservationOutboxWriter.save(new ReservationOutbox(stringPayload, reservation.getReservationId()));
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
         reservationEventPublisher.successReservation(reservationInfo);
 
         return reservationInfo;

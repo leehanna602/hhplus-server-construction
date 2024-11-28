@@ -5,6 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,14 +20,23 @@ import lombok.NoArgsConstructor;
 )
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PaymentOutbox extends BaseOutBox {
 
     @Column(name = "payment_id")
     private Long paymentId;
 
+    @Builder
     public PaymentOutbox(String payload, Long paymentId) {
         super(payload);
         this.paymentId = paymentId;
+    }
+
+    public static PaymentOutbox create(String payload, Long paymentId) {
+        return PaymentOutbox.builder()
+                .payload(payload)
+                .paymentId(paymentId)
+                .build();
     }
 
 }

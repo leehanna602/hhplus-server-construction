@@ -25,6 +25,18 @@ public class ReservationOutboxService {
     private final ObjectMapper objectMapper;
 
     @Transactional
+    public void initReservationOutbox(ReservationInfo reservationInfo) {
+        try {
+            String stringPayload = objectMapper.writeValueAsString(reservationInfo);
+            reservationOutboxWriter.save(ReservationOutbox.create(stringPayload, reservationInfo.reservationId()));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Transactional
     public void updateStatusPublish(ReservationInfo reservationInfo) {
         ReservationOutbox reservationOutbox = reservationOutboxReader.findByReservationIdWithOptimisticLock(reservationInfo.reservationId());
         reservationOutbox.outBoxPublish();

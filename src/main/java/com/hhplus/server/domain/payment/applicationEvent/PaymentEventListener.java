@@ -1,5 +1,6 @@
 package com.hhplus.server.domain.payment.applicationEvent;
 
+import com.hhplus.server.domain.payment.PaymentOutboxService;
 import com.hhplus.server.domain.payment.dto.PaymentInfo;
 import com.hhplus.server.infra.kafka.payment.PaymentKafkaProducer;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +15,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class PaymentEventListener {
 
+    private final PaymentOutboxService paymentOutboxService;
     private final PaymentKafkaProducer paymentKafkaProducer;
 
-//    @Async
-//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-//    public void paymentSuccessHandler(PaymentInfo paymentInfo) throws InterruptedException {
-//        log.info("PaymentEventListener paymentSuccessHandler start: {}", paymentInfo);
-//        Thread.sleep(3000);
-//        log.info("PaymentEventListener paymentSuccessHandler end: {}", paymentInfo);
-//    }
-
+    @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void paymentSuccessHandler(PaymentInfo paymentInfo) {
+        paymentOutboxService.initPaymentOutbox(paymentInfo);
         paymentKafkaProducer.send(paymentInfo);
     }
 

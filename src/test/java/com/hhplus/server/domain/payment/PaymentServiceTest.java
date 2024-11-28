@@ -45,12 +45,6 @@ class PaymentServiceTest {
     @Mock
     private PaymentEventPublisher paymentEventPublisher;
 
-    @Mock
-    private PaymentOutboxWriter paymentOutboxWriter;
-
-    @Mock
-    private ObjectMapper objectMapper;
-
     @InjectMocks
     private PaymentService paymentService;
 
@@ -95,9 +89,8 @@ class PaymentServiceTest {
 
         verify(concertService).completeStatus(reservation.getSeat());
         verify(paymentWriter).save(any(Payment.class));
-        verify(paymentOutboxWriter).save(any(PaymentOutbox.class));
-        verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
         verify(waitingQueueService).removeActiveToken(token);
+        verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
     }
 
     @Test

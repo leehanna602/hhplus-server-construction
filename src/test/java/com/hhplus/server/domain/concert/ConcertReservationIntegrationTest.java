@@ -1,5 +1,6 @@
 package com.hhplus.server.domain.concert;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hhplus.server.application.concert.ReservationFacade;
 import com.hhplus.server.domain.concert.applicationEvent.ReservationEventListener;
 import com.hhplus.server.domain.concert.applicationEvent.ReservationEventPublisher;
@@ -33,29 +34,28 @@ public class ConcertReservationIntegrationTest {
     @Autowired
     private UserService userService;
 
+    @SpyBean
+    private ReservationOutboxWriter reservationOutboxWriter;
+    @SpyBean
+    private ReservationEventPublisher reservationEventPublisher;
+    @SpyBean
+    private ReservationEventListener reservationEventListener;
+    @SpyBean
+    private ReservationKafkaProducer reservationKafkaProducer;
+    @SpyBean
+    private ReservationKafkaConsumer reservationKafkaConsumer;
+
     private User user;
     private Concert concert;
     private ConcertSchedule concertSchedule;
     private ConcertSeat concertSeat;
-
-    @SpyBean
-    private ReservationEventPublisher reservationEventPublisher;
-
-    @SpyBean
-    private ReservationEventListener reservationEventListener;
-
-    @SpyBean
-    private ReservationKafkaProducer reservationKafkaProducer;
-
-    @SpyBean
-    private ReservationKafkaConsumer reservationKafkaConsumer;
 
     @BeforeEach
     void setUp() {
         // User 생성
         user = new User(1L, "user1");
         userService.save(user);
-        
+
         // 콘서트 생성
         concert = Concert.builder()
                 .concertId(1L)
@@ -87,7 +87,7 @@ public class ConcertReservationIntegrationTest {
 
     @Test
     @DisplayName("콘서트 좌석 예약 요청시 성공 후 이벤트 발행")
-    void givenUserRequestConcertSeat_whenConcertReservation_thenSuccessAndPublishEvent() throws InterruptedException {
+    void givenUserRequestConcertSeat_whenConcertReservation_thenSuccessAndPublishEvent() throws InterruptedException, JsonProcessingException {
         // given
         ReservationReq request = new ReservationReq(
                 user.getUserId(),
@@ -106,6 +106,7 @@ public class ConcertReservationIntegrationTest {
 
         verify(reservationEventPublisher).successReservation(any(ReservationInfo.class));
         verify(reservationEventListener, times(1)).reservationSuccessHandler(any(ReservationInfo.class));
+        verify(reservationOutboxWriter).save(any(ReservationOutbox.class));
         verify(reservationKafkaProducer).send(reservationInfo);
         Thread.sleep(3000);
         verify(reservationKafkaConsumer).consume(reservationInfo);

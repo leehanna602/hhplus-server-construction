@@ -1,5 +1,6 @@
 package com.hhplus.server.domain.concert.applicationEvent;
 
+import com.hhplus.server.domain.concert.ReservationOutboxService;
 import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.infra.kafka.concert.ReservationKafkaProducer;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +15,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class ReservationEventListener {
 
+    private final ReservationOutboxService reservationOutboxService;
     private final ReservationKafkaProducer reservationKafkaProducer;
 
-//    @Async
-//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-//    public void reservationSuccessHandler(ReservationInfo reservationInfo) throws InterruptedException {
-//        log.info("ReservationEventListener reservationSuccessHandler start: {}", reservationInfo);
-//        Thread.sleep(5000);
-//        log.info("ReservationEventListener reservationSuccessHandler end: {}", reservationInfo);
-//    }
 
+    @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void reservationSuccessHandler(ReservationInfo reservationInfo) {
+        reservationOutboxService.initReservationOutbox(reservationInfo);
         reservationKafkaProducer.send(reservationInfo);
     }
 

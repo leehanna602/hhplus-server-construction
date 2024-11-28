@@ -47,20 +47,12 @@ public class PaymentService {
         reservation = reservationService.completeStatus(reservation);
         concertService.completeStatus(reservation.getSeat());
 
-        // 4. 결제 완료 이벤트 발행 및 outbox 저장
-        PaymentInfo paymentInfo = new PaymentInfo(payment.getPaymentId(), user.getUserId(), PaymentStatus.COMPLETED);
-        try {
-            String stringPayload = objectMapper.writeValueAsString(paymentInfo);
-            paymentOutboxWriter.save(new PaymentOutbox(stringPayload, paymentInfo.paymentId()));
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        paymentEventPublisher.successPayment(paymentInfo);
-
-        // 5. 토큰 만료
+        // 4. 토큰 만료
         waitingQueueService.removeActiveToken(token);
+
+        // 5. 결제 완료 이벤트 발행 및 outbox 저장
+        PaymentInfo paymentInfo = new PaymentInfo(payment.getPaymentId(), user.getUserId(), PaymentStatus.COMPLETED);
+        paymentEventPublisher.successPayment(paymentInfo);
 
         return paymentInfo;
     }

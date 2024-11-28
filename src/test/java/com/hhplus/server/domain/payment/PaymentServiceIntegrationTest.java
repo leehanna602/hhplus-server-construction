@@ -6,6 +6,7 @@ import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.payment.applicationEvent.PaymentEventListener;
 import com.hhplus.server.domain.payment.applicationEvent.PaymentEventPublisher;
 import com.hhplus.server.domain.payment.dto.PaymentInfo;
+import com.hhplus.server.domain.payment.model.PaymentOutbox;
 import com.hhplus.server.domain.payment.model.PaymentStatus;
 import com.hhplus.server.domain.payment.model.Point;
 import com.hhplus.server.domain.user.UserService;
@@ -33,9 +34,25 @@ public class PaymentServiceIntegrationTest {
 
     @Autowired
     private PaymentFacade paymentFacade;
-
     @Autowired
     private UserService userService;
+    @Autowired
+    private PointService pointService;
+    @Autowired
+    private ConcertService concertService;
+    @Autowired
+    private ReservationJpaRepository reservationJpaRepository;
+
+    @SpyBean
+    private PaymentOutboxWriter paymentOutboxWriter;
+    @SpyBean
+    private PaymentEventPublisher paymentEventPublisher;
+    @SpyBean
+    private PaymentEventListener paymentEventListener;
+    @SpyBean
+    private PaymentKafkaProducer paymentKafkaProducer;
+    @SpyBean
+    private PaymentKafkaConsumer paymentKafkaConsumer;
 
     private User testUser;
     private Point testPoint;
@@ -45,26 +62,6 @@ public class PaymentServiceIntegrationTest {
     private Reservation reservation;
 
     private static final int USER_DEFAULT_AMOUNT = 100000;
-
-    @Autowired
-    private PointService pointService;
-    @Autowired
-    private ConcertService concertService;
-    @Autowired
-    private ReservationJpaRepository reservationJpaRepository;
-
-    @SpyBean
-    private PaymentEventPublisher paymentEventPublisher;
-
-    @SpyBean
-    private PaymentEventListener paymentEventListener;
-
-    @SpyBean
-    private PaymentKafkaProducer paymentKafkaProducer;
-
-    @SpyBean
-    private PaymentKafkaConsumer paymentKafkaConsumer;
-
 
     @BeforeEach
     void setUp() {
@@ -136,6 +133,7 @@ public class PaymentServiceIntegrationTest {
 
         verify(paymentEventPublisher).successPayment(any(PaymentInfo.class));
         verify(paymentEventListener, times(1)).paymentSuccessHandler(any(PaymentInfo.class));
+        verify(paymentOutboxWriter).save(any(PaymentOutbox.class));
         verify(paymentKafkaProducer).send(paymentInfo);
         Thread.sleep(3000);
         verify(paymentKafkaConsumer).consume(paymentInfo);

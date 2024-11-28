@@ -25,6 +25,18 @@ public class PaymentOutboxService {
     private final ObjectMapper objectMapper;
 
     @Transactional
+    public void initPaymentOutbox(PaymentInfo paymentInfo) {
+        try {
+            String stringPayload = objectMapper.writeValueAsString(paymentInfo);
+            paymentOutboxWriter.save(PaymentOutbox.create(stringPayload, paymentInfo.paymentId()));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Transactional
     public void updateStatusPublish(PaymentInfo message) {
         PaymentOutbox paymentOutbox = paymentOutboxReader.findByPaymentIdWithOptimisticLock(message.paymentId());
         paymentOutbox.outBoxPublish();
