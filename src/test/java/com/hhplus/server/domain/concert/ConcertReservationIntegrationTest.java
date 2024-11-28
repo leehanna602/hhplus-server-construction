@@ -7,6 +7,8 @@ import com.hhplus.server.domain.concert.dto.ReservationInfo;
 import com.hhplus.server.domain.concert.model.*;
 import com.hhplus.server.domain.user.UserService;
 import com.hhplus.server.domain.user.model.User;
+import com.hhplus.server.infra.kafka.concert.ReservationKafkaProducer;
+import com.hhplus.server.interfaces.kafka.concert.ReservationKafkaConsumer;
 import com.hhplus.server.interfaces.v1.concert.req.ReservationReq;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +20,8 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ConcertReservationIntegrationTest {
@@ -42,6 +43,12 @@ public class ConcertReservationIntegrationTest {
 
     @SpyBean
     private ReservationEventListener reservationEventListener;
+
+    @SpyBean
+    private ReservationKafkaProducer reservationKafkaProducer;
+
+    @SpyBean
+    private ReservationKafkaConsumer reservationKafkaConsumer;
 
     @BeforeEach
     void setUp() {
@@ -98,8 +105,10 @@ public class ConcertReservationIntegrationTest {
         assertThat(reservationInfo.status()).isEqualTo(ReservationStatus.TEMPORARY);
 
         verify(reservationEventPublisher).successReservation(any(ReservationInfo.class));
-        Thread.sleep(3000);
         verify(reservationEventListener, times(1)).reservationSuccessHandler(any(ReservationInfo.class));
+        verify(reservationKafkaProducer).send(reservationInfo.toString());
+        Thread.sleep(3000);
+        verify(reservationKafkaConsumer).consume(reservationInfo.toString());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.hhplus.server.infra.waitingQueue;
+package com.hhplus.server.infra.redis.waitingQueue;
 
 import com.hhplus.server.domain.waitingQueue.RedisTokenWaitingQueue;
 import com.hhplus.server.domain.waitingQueue.model.WaitingQueue;

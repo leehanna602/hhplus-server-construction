@@ -1,4 +1,4 @@
-package com.hhplus.server.infra.user;
+package com.hhplus.server.infra.db.user;
 
 import com.hhplus.server.domain.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
