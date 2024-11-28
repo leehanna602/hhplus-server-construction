@@ -1,4 +1,4 @@
-package com.hhplus.server.config.Redis;
+package com.hhplus.server.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
