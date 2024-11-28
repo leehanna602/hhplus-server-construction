@@ -1,5 +1,6 @@
 package com.hhplus.server.infra.kafka.payment;
 
+import com.hhplus.server.domain.payment.dto.PaymentInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +15,9 @@ public class PaymentKafkaProducer {
     @Value("${spring.kafka.topic.payment}")
     private String defaultTopic;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, PaymentInfo> kafkaTemplate;
 
-    public void send(String message) {
+    public void send(PaymentInfo message) {
         log.info("PaymentKafkaProducer send message: {}", message);
         kafkaTemplate.send(defaultTopic, message);
     }

@@ -1,7 +1,7 @@
 package com.hhplus.server.interfaces.kafka;
 
-public interface KafkaMessageConsumer {
+public interface KafkaMessageConsumer<T> {
 
-    void consume(String message);
+    void consume(T message);
 
 }

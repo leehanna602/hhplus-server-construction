@@ -20,8 +20,8 @@ public class ConcertReservationService {
     private final ConcertReader concertReader;
     private final ConcertWriter concertWriter;
     private final ReservationWriter reservationWriter;
-
     private final ReservationEventPublisher reservationEventPublisher;
+
 
     @Transactional
     public ReservationInfo executeInReservationTransaction(User user, Long seatId) {
@@ -43,7 +43,7 @@ public class ConcertReservationService {
                 reservation.getReservationStatus(), reservation.getReservationExpireDt()
         );
 
-        // 4. 예약 완료 이벤트 발행
+        // 4. 예약 완료 이벤트 발행 및 outbox 저장
         reservationEventPublisher.successReservation(reservationInfo);
 
         return reservationInfo;

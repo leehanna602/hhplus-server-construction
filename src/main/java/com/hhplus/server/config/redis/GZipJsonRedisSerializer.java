@@ -1,4 +1,4 @@
-package com.hhplus.server.config.Redis;
+package com.hhplus.server.config.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

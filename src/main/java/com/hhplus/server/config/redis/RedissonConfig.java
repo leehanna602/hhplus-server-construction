@@ -1,4 +1,4 @@
-package com.hhplus.server.config.Redis;
+package com.hhplus.server.config.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
