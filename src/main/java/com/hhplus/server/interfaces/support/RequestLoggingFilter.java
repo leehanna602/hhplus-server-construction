@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,19 +28,24 @@ public class RequestLoggingFilter implements Filter {
 
         // requestId 생성
         String requestId = UUID.randomUUID().toString();
-        servletRequest.setAttribute("requestId", requestId);
+        try {
+            MDC.put("request_id", requestId);
 
-        log.info("[{}] Request - Method: {} | URL: {} | Client IP: {} | User Agent: {} | Time: {}",
-                requestId,
-                httpRequest.getMethod(),
-                httpRequest.getRequestURL(),
-                httpRequest.getRemoteAddr(),
-                httpRequest.getHeader("User-Agent"),
-                LocalDateTime.now()
-        );
+            log.info("Request - Method: {} | URL: {} | Client IP: {} | User Agent: {} | Time: {}",
+                    httpRequest.getMethod(),
+                    httpRequest.getRequestURL(),
+                    httpRequest.getRemoteAddr(),
+                    httpRequest.getHeader("User-Agent"),
+                    LocalDateTime.now()
+            );
 
-        filterChain.doFilter(servletRequest, servletResponse);
-        log.info("[{}] Response Status: {}", requestId, httpResponse.getStatus());
+            filterChain.doFilter(servletRequest, servletResponse);
+            log.info("Response Status: {}", httpResponse.getStatus());
+
+        } finally {
+            // 요청 완료 후 MDC clear
+            MDC.clear();
+        }
     }
 
     @Override
