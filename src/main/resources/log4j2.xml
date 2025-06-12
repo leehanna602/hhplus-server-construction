@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+<!--        <Property name="logFileName">concert</Property>-->
+        <property name="pattern_layout" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%X{request_id}] [%t] %c{1.} - %msg%n" />
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern_layout}"/>
+        </Console>
+<!--        <RollingFile name="file" fileName="/home/log/${logFileName}/${logFileName}.log"-->
+<!--                     filePattern="/home/log/${logFileName}/${logFileName}.%d{yyyy-MM-dd}.log">-->
+<!--            <PatternLayout pattern="${pattern_layout}"/>-->
+<!--            <Policies>-->
+<!--                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>-->
+<!--            </Policies>-->
+<!--            <DefaultRolloverStrategy max="31" fileIndex="min"/>-->
+<!--        </RollingFile>-->
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+<!--            <AppenderRef ref="file"/>-->
+        </Root>
+        <Logger name="com.hhplus.server" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+<!--            <AppenderRef ref="file"/>-->
+        </Logger>
+    </Loggers>
+</Configuration>
